@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>えいけん5きゅう もんだい</title>
+<link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #87CEEB;
+    --sun: #FFD700;
+    --grass: #5CB85C;
+    --pink: #FF6EB4;
+    --orange: #FF8C00;
+    --purple: #9B59B6;
+    --red: #E74C3C;
+    --white: #FFFDF0;
+    --dark: #333;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Kosugi Maru', 'Rounded Mplus 1c', sans-serif;
+    background: var(--sky);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    background: linear-gradient(180deg, #87CEEB 0%, #B0E2FF 60%, #c8f5c8 100%);
+  }
+
+  /* 雲 */
+  .clouds { position: fixed; top: 0; left: 0; width: 100%; pointer-events: none; z-index: 0; }
+  .cloud {
+    position: absolute;
+    background: white;
+    border-radius: 50px;
+    opacity: 0.8;
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+  }
+  .c1 { width: 120px; height: 40px; top: 30px; left: -140px; animation: moveClouds 20s linear infinite; }
+  .c1::before { width: 60px; height: 60px; top: -30px; left: 15px; }
+  .c1::after { width: 40px; height: 40px; top: -20px; left: 55px; }
+  .c2 { width: 80px; height: 28px; top: 80px; left: -100px; animation: moveClouds 28s linear infinite 8s; }
+  .c2::before { width: 45px; height: 45px; top: -22px; left: 10px; }
+  .c3 { width: 100px; height: 34px; top: 15px; left: -120px; animation: moveClouds 22s linear infinite 15s; }
+  .c3::before { width: 55px; height: 55px; top: -28px; left: 12px; }
+  @keyframes moveClouds { to { left: 110%; } }
+
+  /* 太陽 */
+  .sun {
+    position: fixed;
+    top: 20px; right: 30px;
+    width: 70px; height: 70px;
+    background: var(--sun);
+    border-radius: 50%;
+    box-shadow: 0 0 0 12px rgba(255,215,0,0.3), 0 0 0 24px rgba(255,215,0,0.15);
+    animation: spin 20s linear infinite;
+    z-index: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* メインコンテンツ */
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    padding-bottom: 80px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: clamp(1.6rem, 6vw, 2.4rem);
+    color: #fff;
+    text-shadow: 3px 3px 0 var(--orange), 5px 5px 0 rgba(0,0,0,0.15);
+    margin: 20px 0 8px;
+    animation: bounceIn 0.6s ease;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 1rem;
+    color: #fff;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+  }
+
+  /* スコア表示 */
+  .scoreboard {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .score-box {
+    background: white;
+    border-radius: 20px;
+    padding: 8px 20px;
+    text-align: center;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+    border: 3px solid var(--orange);
+  }
+  .score-label { font-size: 0.7rem; color: #888; }
+  .score-val { font-size: 1.4rem; font-weight: bold; color: var(--orange); }
+
+  /* プログレスバー */
+  .progress-wrap {
+    background: rgba(255,255,255,0.5);
+    border-radius: 20px;
+    height: 18px;
+    margin-bottom: 18px;
+    overflow: hidden;
+    border: 2px solid white;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pink), var(--orange));
+    border-radius: 20px;
+    transition: width 0.5s ease;
+    position: relative;
+  }
+  .progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 6px; right: 6px; height: 6px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 10px;
+  }
+
+  /* カード */
+  .card {
+    background: var(--white);
+    border-radius: 30px;
+    padding: 28px 24px;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.1), 0 12px 30px rgba(0,0,0,0.12);
+    margin-bottom: 16px;
+    animation: slideUp 0.4s ease;
+  }
+
+  .category-badge {
+    display: inline-block;
+    background: var(--purple);
+    color: white;
+    font-size: 0.75rem;
+    padding: 3px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+
+  .question-num {
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 6px;
+  }
+
+  .question-text {
+    font-size: clamp(1.1rem, 4vw, 1.5rem);
+    color: var(--dark);
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+
+  .question-ruby {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 18px;
+  }
+
+  /* 選択肢 */
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+
+  .choice-btn {
+    background: white;
+    border: 3px solid #E0E0E0;
+    border-radius: 18px;
+    padding: 14px 20px;
+    font-family: inherit;
+    font-size: clamp(1rem, 3.5vw, 1.2rem);
+    color: var(--dark);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 3px 0 #E0E0E0;
+  }
+
+  .choice-btn:hover:not(:disabled) {
+    border-color: var(--orange);
+    background: #FFF8F0;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 var(--orange);
+  }
+
+  .choice-letter {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+  }
+
+  .choice-btn.correct {
+    border-color: var(--grass);
+    background: #F0FFF4;
+    box-shadow: 0 3px 0 var(--grass);
+    animation: correctPop 0.4s ease;
+  }
+  .choice-btn.correct .choice-letter { background: var(--grass); color: white; }
+
+  .choice-btn.wrong {
+    border-color: var(--red);
+    background: #FFF0F0;
+    box-shadow: 0 3px 0 var(--red);
+    animation: shake 0.3s ease;
+  }
+  .choice-btn.wrong .choice-letter { background: var(--red); color: white; }
+
+  .choice-btn:disabled { cursor: default; }
+
+  /* フィードバック */
+  .feedback {
+    display: none;
+    border-radius: 20px;
+    padding: 16px 20px;
+    margin-top: 12px;
+    font-size: 1rem;
+    line-height: 1.6;
+    animation: slideUp 0.3s ease;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #E8FAF0; border: 2px solid var(--grass); color: #2a7a2a; }
+  .feedback.ng { background: #FEF0F0; border: 2px solid var(--red); color: #8a2a2a; }
+  .feedback-icon { font-size: 1.5rem; margin-right: 6px; }
+  .feedback-eng { font-size: 1.2rem; font-weight: bold; margin-bottom: 4px; }
+
+  /* ボタン */
+  .btn-next {
+    width: 100%;
+    margin-top: 16px;
+    padding: 16px;
+    font-family: inherit;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, var(--orange), #FF6EB4);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.2);
+    transition: all 0.15s ease;
+    display: none;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 7px 0 rgba(0,0,0,0.2); }
+  .btn-next:active { transform: translateY(2px); box-shadow: 0 3px 0 rgba(0,0,0,0.2); }
+  .btn-next.show { display: block; animation: bounceIn 0.4s ease; }
+
+  /* カテゴリ選択 */
+  .cat-screen {
+    animation: slideUp 0.4s ease;
+  }
+  .cat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .cat-btn {
+    background: white;
+    border: 3px solid #E0E0E0;
+    border-radius: 20px;
+    padding: 16px 12px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 0 #E0E0E0;
+    text-align: center;
+  }
+  .cat-btn:hover { transform: translateY(-3px); }
+  .cat-btn .cat-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+  .cat-btn.selected { border-color: var(--orange); box-shadow: 0 4px 0 var(--orange); background: #FFF8F0; }
+
+  .btn-start {
+    width: 100%;
+    margin-top: 16px;
+    padding: 18px;
+    font-family: inherit;
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, #5CB85C, #2ecc71);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.2);
+    transition: all 0.15s;
+  }
+  .btn-start:hover { transform: translateY(-2px); }
+  .btn-start:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+  /* けっか画面 */
+  .result-screen { text-align: center; animation: bounceIn 0.5s ease; }
+  .result-score { font-size: 4rem; font-weight: bold; color: var(--orange); text-shadow: 3px 3px 0 rgba(0,0,0,0.1); }
+  .result-max { font-size: 1.5rem; color: #aaa; }
+  .result-msg { font-size: 1.4rem; margin: 12px 0 20px; }
+  .stars { font-size: 2rem; margin: 10px 0; }
+  .result-animals { font-size: 3rem; animation: bounce 0.6s ease infinite alternate; }
+  @keyframes bounce { to { transform: translateY(-10px); } }
+
+  .btn-retry {
+    padding: 16px 40px;
+    font-family: inherit;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.2);
+    margin: 6px;
+    transition: all 0.15s;
+  }
+  .btn-retry:hover { transform: translateY(-2px); }
+
+  /* アニメ */
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes bounceIn { 0% { opacity: 0; transform: scale(0.7); } 70% { transform: scale(1.05); } 100% { opacity: 1; transform: scale(1); } }
+  @keyframes correctPop { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+  /* 草地 */
+  .ground {
+    position: fixed;
+    bottom: 0; left: 0;
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(180deg, var(--grass) 0%, #3a8c3a 100%);
+    z-index: 0;
+    border-radius: 50% 50% 0 0 / 20px 20px 0 0;
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- 装飾 -->
+<div class="clouds">
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+</div>
+<div class="sun"></div>
+<div class="ground"></div>
+
+<div class="container">
+  <h1>🌟 えいけん5きゅう 🌟</h1>
+  <p class="subtitle">たのしく えいごを まなぼう！</p>
+
+  <!-- カテゴリ選択画面 -->
+  <div id="catScreen" class="card cat-screen">
+    <div class="question-text">どの もんだいを やる？</div>
+    <div class="cat-grid" id="catGrid">
+      <button class="cat-btn" onclick="toggleCat(this,'たんご')" data-cat="たんご">
+        <span class="cat-icon">📚</span>たんご
+        <div style="font-size:0.7rem;color:#aaa;margin-top:2px">vocabulary</div>
+      </button>
+      <button class="cat-btn" onclick="toggleCat(this,'あいさつ')" data-cat="あいさつ">
+        <span class="cat-icon">👋</span>あいさつ
+        <div style="font-size:0.7rem;color:#aaa;margin-top:2px">greetings</div>
+      </button>
+      <button class="cat-btn" onclick="toggleCat(this,'かぞく')" data-cat="かぞく">
+        <span class="cat-icon">👨‍👩‍👧</span>かぞく
+        <div style="font-size:0.7rem;color:#aaa;margin-top:2px">family</div>
+      </button>
+      <button class="cat-btn" onclick="toggleCat(this,'いろ・かず')" data-cat="いろ・かず">
+        <span class="cat-icon">🎨</span>いろ・かず
+        <div style="font-size:0.7rem;color:#aaa;margin-top:2px">colors & numbers</div>
+      </button>
+      <button class="cat-btn" onclick="toggleCat(this,'どうぶつ')" data-cat="どうぶつ">
+        <span class="cat-icon">🐶</span>どうぶつ
+        <div style="font-size:0.7rem;color:#aaa;margin-top:2px">animals</div>
+      </button>
+      <button class="cat-btn" onclick="toggleCat(this,'にちじょう')" data-cat="にちじょう">
+        <span class="cat-icon">🏫</span>にちじょう
+        <div style="font-size:0.7rem;color:#aaa;margin-top:2px">daily life</div>
+      </button>
+    </div>
+    <div style="margin-top:14px;font-size:0.85rem;color:#aaa;text-align:center">なんもんにする？</div>
+    <div style="display:flex;justify-content:center;gap:10px;margin:10px 0">
+      <button class="cat-btn" id="q5btn" onclick="setQCount(5,this)" style="padding:10px 20px">5もん</button>
+      <button class="cat-btn selected" id="q10btn" onclick="setQCount(10,this)" style="padding:10px 20px">10もん</button>
+      <button class="cat-btn" id="q15btn" onclick="setQCount(15,this)" style="padding:10px 20px">15もん</button>
+    </div>
+    <button class="btn-start" id="startBtn" onclick="startQuiz()" disabled>
+      🚀 はじめる！
+    </button>
+  </div>
+
+  <!-- クイズ画面 -->
+  <div id="quizScreen" class="hidden">
+    <div class="scoreboard">
+      <div class="score-box">
+        <div class="score-label">せいかい</div>
+        <div class="score-val" id="scoreDisp">0</div>
+      </div>
+      <div class="score-box">
+        <div class="score-label">もんだい</div>
+        <div class="score-val" id="qNumDisp">1</div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar" style="width:0%"></div>
+    </div>
+    <div class="card">
+      <div class="category-badge" id="catBadge"></div>
+      <div class="question-num" id="qNum"></div>
+      <div class="question-text" id="qText"></div>
+      <div class="question-ruby" id="qRuby"></div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="nextBtn" onclick="nextQuestion()">つぎのもんだい →</button>
+    </div>
+  </div>
+
+  <!-- けっか画面 -->
+  <div id="resultScreen" class="hidden card result-screen">
+    <div class="result-animals" id="resultAnimal">🎉</div>
+    <div style="font-size:1.1rem;margin:10px 0;color:#888">けっか</div>
+    <div class="result-score" id="resultScore">0</div>
+    <div class="result-max" id="resultMax">/ 10もん</div>
+    <div class="stars" id="resultStars"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="btn-retry" onclick="goHome()">🏠 カテゴリをえらぶ</button>
+    <button class="btn-retry" onclick="retryQuiz()" style="background:linear-gradient(135deg,var(--grass),#27ae60)">🔄 もういちど</button>
+  </div>
+</div>
+
+<script>
+// ==================== 問題データ ====================
+const allQuestions = [
+  // ===== たんご =====
+  { cat:'たんご', en:'apple', q:'「りんご」は えいごで なんと いう？', choices:['apple','orange','banana','grape'], ans:0 },
+  { cat:'たんご', en:'book', q:'「ほん」は えいごで なんと いう？', choices:['bag','pen','book','desk'], ans:2 },
+  { cat:'たんご', en:'school', q:'「がっこう」は えいごで なんと いう？', choices:['park','school','station','library'], ans:1 },
+  { cat:'たんご', en:'water', q:'「みず」は えいごで なんと いう？', choices:['juice','milk','water','tea'], ans:2 },
+  { cat:'たんご', en:'blue', q:'「あおい」は えいごで なんと いう？', choices:['red','green','yellow','blue'], ans:3 },
+  { cat:'たんご', en:'run', q:'「はしる」は えいごで なんと いう？', choices:['swim','run','walk','jump'], ans:1 },
+  { cat:'たんご', en:'big', q:'「おおきい」は えいごで なんと いう？', choices:['small','tall','big','long'], ans:2 },
+  { cat:'たんご', en:'cat', q:'「ねこ」は えいごで なんと いう？', choices:['dog','bird','cat','fish'], ans:2 },
+  { cat:'たんご', en:'pencil', q:'「えんぴつ」は えいごで なんと いう？', choices:['ruler','eraser','pencil','crayon'], ans:2 },
+  { cat:'たんご', en:'park', q:'「こうえん」は えいごで なんと いう？', choices:['park','store','house','room'], ans:0 },
+  { cat:'たんご', en:'train', q:'「でんしゃ」は えいごで なんと いう？', choices:['bus','car','bike','train'], ans:3 },
+  { cat:'たんご', en:'bread', q:'「パン」は えいごで なんと いう？', choices:['rice','bread','cake','soup'], ans:1 },
+
+  // ===== あいさつ =====
+  { cat:'あいさつ', en:'Good morning', q:'「おはようございます」は えいごで？', choices:['Good night','Good afternoon','Good morning','Good evening'], ans:2 },
+  { cat:'あいさつ', en:'Thank you', q:'「ありがとう」は えいごで？', choices:['Sorry','Please','You\'re welcome','Thank you'], ans:3 },
+  { cat:'あいさつ', en:'Goodbye', q:'「さようなら」は えいごで？', choices:['Hello','Goodbye','Nice to meet you','See you'], ans:1 },
+  { cat:'あいさつ', en:'I\'m sorry', q:'「ごめんなさい」は えいごで？', choices:['Thank you','I\'m sorry','Excuse me','Help me'], ans:1 },
+  { cat:'あいさつ', en:'Good night', q:'「おやすみなさい」は えいごで？', choices:['Good morning','Good night','Good afternoon','Goodnight'], ans:1 },
+  { cat:'あいさつ', en:'Please', q:'「おねがいします」は えいごで？', choices:['Please','Sorry','Thank you','Pardon'], ans:0 },
+  { cat:'あいさつ', en:'Hello', q:'「こんにちは」は えいごで？', choices:['Goodbye','See you','Hello','Hi there'], ans:2 },
+  { cat:'あいさつ', en:'Yes', q:'「はい」は えいごで？', choices:['No','Maybe','Yes','OK'], ans:2 },
+  { cat:'あいさつ', en:'No', q:'「いいえ」は えいごで？', choices:['Yes','No','Not','Never'], ans:1 },
+
+  // ===== かぞく =====
+  { cat:'かぞく', en:'mother', q:'「おかあさん」は えいごで？', choices:['sister','mother','aunt','grandmother'], ans:1 },
+  { cat:'かぞく', en:'father', q:'「おとうさん」は えいごで？', choices:['uncle','brother','father','grandfather'], ans:2 },
+  { cat:'かぞく', en:'sister', q:'「おねえさん・いもうと」は えいごで？', choices:['cousin','sister','mother','daughter'], ans:1 },
+  { cat:'かぞく', en:'brother', q:'「おにいさん・おとうと」は えいごで？', choices:['cousin','father','son','brother'], ans:3 },
+  { cat:'かぞく', en:'grandfather', q:'「おじいさん」は えいごで？', choices:['uncle','grandfather','father','brother'], ans:1 },
+  { cat:'かぞく', en:'grandmother', q:'「おばあさん」は えいごで？', choices:['aunt','grandmother','mother','sister'], ans:1 },
+  { cat:'かぞく', en:'baby', q:'「あかちゃん」は えいごで？', choices:['child','baby','kid','boy'], ans:1 },
+
+  // ===== いろ・かず =====
+  { cat:'いろ・かず', en:'red', q:'「あか」は えいごで？', choices:['blue','green','red','pink'], ans:2 },
+  { cat:'いろ・かず', en:'green', q:'「みどり」は えいごで？', choices:['green','yellow','blue','purple'], ans:0 },
+  { cat:'いろ・かず', en:'yellow', q:'「きいろ」は えいごで？', choices:['orange','white','pink','yellow'], ans:3 },
+  { cat:'いろ・かず', en:'white', q:'「しろ」は えいごで？', choices:['black','gray','white','silver'], ans:2 },
+  { cat:'いろ・かず', en:'three', q:'「さん（3）」は えいごで？', choices:['one','two','three','four'], ans:2 },
+  { cat:'いろ・かず', en:'five', q:'「ご（5）」は えいごで？', choices:['three','four','five','six'], ans:2 },
+  { cat:'いろ・かず', en:'ten', q:'「じゅう（10）」は えいごで？', choices:['eight','nine','ten','eleven'], ans:2 },
+  { cat:'いろ・かず', en:'black', q:'「くろ」は えいごで？', choices:['black','gray','brown','dark'], ans:0 },
+  { cat:'いろ・かず', en:'pink', q:'「ピンク」は えいごで？', choices:['pink','purple','red','orange'], ans:0 },
+  { cat:'いろ・かず', en:'seven', q:'「なな（7）」は えいごで？', choices:['five','six','seven','eight'], ans:2 },
+
+  // ===== どうぶつ =====
+  { cat:'どうぶつ', en:'dog', q:'「いぬ」は えいごで？', choices:['cat','dog','rabbit','hamster'], ans:1 },
+  { cat:'どうぶつ', en:'bird', q:'「とり」は えいごで？', choices:['fish','bird','frog','snake'], ans:1 },
+  { cat:'どうぶつ', en:'horse', q:'「うま」は えいごで？', choices:['cow','pig','horse','sheep'], ans:2 },
+  { cat:'どうぶつ', en:'fish', q:'「さかな」は えいごで？', choices:['fish','crab','shrimp','octopus'], ans:0 },
+  { cat:'どうぶつ', en:'rabbit', q:'「うさぎ」は えいごで？', choices:['mouse','rabbit','squirrel','hamster'], ans:1 },
+  { cat:'どうぶつ', en:'lion', q:'「ライオン」は えいごで？', choices:['tiger','lion','bear','wolf'], ans:1 },
+  { cat:'どうぶつ', en:'elephant', q:'「ぞう」は えいごで？', choices:['hippo','elephant','rhino','giraffe'], ans:1 },
+  { cat:'どうぶつ', en:'monkey', q:'「さる」は えいごで？', choices:['monkey','gorilla','chimp','lemur'], ans:0 },
+  { cat:'どうぶつ', en:'cow', q:'「うし」は えいごで？', choices:['pig','sheep','cow','goat'], ans:2 },
+
+  // ===== にちじょう =====
+  { cat:'にちじょう', en:'eat', q:'「たべる」は えいごで？', choices:['drink','eat','cook','wash'], ans:1 },
+  { cat:'にちじょう', en:'sleep', q:'「ねる」は えいごで？', choices:['wake','sleep','rest','sit'], ans:1 },
+  { cat:'にちじょう', en:'go', q:'「いく」は えいごで？', choices:['come','go','stay','wait'], ans:1 },
+  { cat:'にちじょう', en:'see', q:'「みる」は えいごで？', choices:['hear','see','touch','smell'], ans:1 },
+  { cat:'にちじょう', en:'play', q:'「あそぶ」は えいごで？', choices:['work','study','play','rest'], ans:2 },
+  { cat:'にちじょう', en:'study', q:'「べんきょうする」は えいごで？', choices:['play','read','study','think'], ans:2 },
+  { cat:'にちじょう', en:'listen', q:'「きく」は えいごで？', choices:['listen','look','feel','touch'], ans:0 },
+  { cat:'にちじょう', en:'write', q:'「かく」は えいごで？', choices:['read','write','draw','make'], ans:1 },
+  { cat:'にちじょう', en:'drink', q:'「のむ」は えいごで？', choices:['eat','drink','cook','taste'], ans:1 },
+  { cat:'にちじょう', en:'open', q:'「あける」は えいごで？', choices:['close','open','lock','break'], ans:1 },
+];
+
+// ==================== 状態 ====================
+let selectedCats = [];
+let qCount = 10;
+let questions = [];
+let current = 0;
+let score = 0;
+let answered = false;
+
+// ==================== カテゴリ選択 ====================
+function toggleCat(btn, cat) {
+  if (btn.classList.contains('selected')) {
+    btn.classList.remove('selected');
+    selectedCats = selectedCats.filter(c => c !== cat);
+  } else {
+    btn.classList.add('selected');
+    selectedCats.push(cat);
+  }
+  document.getElementById('startBtn').disabled = selectedCats.length === 0;
+}
+
+function setQCount(n, btn) {
+  qCount = n;
+  document.querySelectorAll('#q5btn,#q10btn,#q15btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+// ==================== クイズ開始 ====================
+function startQuiz() {
+  const pool = allQuestions.filter(q => selectedCats.includes(q.cat));
+  if (pool.length === 0) return;
+  // シャッフルして必要数取得
+  questions = shuffle([...pool]).slice(0, Math.min(qCount, pool.length));
+  current = 0;
+  score = 0;
+  document.getElementById('catScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  showQuestion();
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ==================== 問題表示 ====================
+function showQuestion() {
+  answered = false;
+  const q = questions[current];
+  const total = questions.length;
+
+  document.getElementById('catBadge').textContent = q.cat;
+  document.getElementById('qNum').textContent = `もんだい ${current + 1} / ${total}`;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('qRuby').textContent = '';
+  document.getElementById('qNumDisp').textContent = `${current + 1}/${total}`;
+  document.getElementById('scoreDisp').textContent = score;
+  document.getElementById('progressBar').style.width = `${(current / total) * 100}%`;
+
+  const letters = ['A','B','C','D'];
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  q.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="choice-letter">${letters[i]}</span>${c}`;
+    btn.onclick = () => selectAnswer(i, btn);
+    choicesDiv.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.innerHTML = '';
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.className = 'btn-next';
+  nextBtn.textContent = current < questions.length - 1 ? 'つぎのもんだい →' : '🎉 けっかをみる！';
+}
+
+function selectAnswer(idx, btn) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const allBtns = document.querySelectorAll('.choice-btn');
+  allBtns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback');
+
+  if (idx === q.ans) {
+    score++;
+    btn.classList.add('correct');
+    fb.className = 'feedback ok show';
+    fb.innerHTML = `<span class="feedback-icon">⭐</span><span class="feedback-eng">${q.en}</span><br>せいかい！すごい！`;
+  } else {
+    btn.classList.add('wrong');
+    allBtns[q.ans].classList.add('correct');
+    fb.className = 'feedback ng show';
+    fb.innerHTML = `<span class="feedback-icon">💪</span>ざんねん！<br>せいかいは <strong>${q.choices[q.ans]}</strong>（${q.en}）だよ！`;
+  }
+  document.getElementById('scoreDisp').textContent = score;
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResult();
+  } else {
+    showQuestion();
+  }
+}
+
+// ==================== 結果画面 ====================
+function showResult() {
+  document.getElementById('quizScreen').classList.add('hidden');
+  const rs = document.getElementById('resultScreen');
+  rs.classList.remove('hidden');
+  const total = questions.length;
+  const pct = score / total;
+
+  document.getElementById('resultScore').textContent = score;
+  document.getElementById('resultMax').textContent = `/ ${total}もん`;
+
+  let stars = '';
+  let msg = '';
+  let animal = '';
+
+  if (pct >= 0.9) {
+    stars = '⭐⭐⭐';
+    msg = 'かんぺき！えいごてんさい！🎊';
+    animal = '🦁👑';
+  } else if (pct >= 0.7) {
+    stars = '⭐⭐';
+    msg = 'よくできました！すごいよ！🌟';
+    animal = '🐯✨';
+  } else if (pct >= 0.5) {
+    stars = '⭐';
+    msg = 'がんばったね！もうすこし！🌈';
+    animal = '🐨💪';
+  } else {
+    stars = '🔥';
+    msg = 'つぎは もっとできるよ！💪';
+    animal = '🐣🌱';
+  }
+
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultMsg').textContent = msg;
+  document.getElementById('resultAnimal').textContent = animal;
+  document.getElementById('progressBar').style.width = '100%';
+}
+
+function goHome() {
+  document.getElementById('resultScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.add('hidden');
+  document.getElementById('catScreen').classList.remove('hidden');
+}
+
+function retryQuiz() {
+  document.getElementById('resultScreen').classList.add('hidden');
+  questions = shuffle([...questions]);
+  current = 0;
+  score = 0;
+  document.getElementById('quizScreen').classList.remove('hidden');
+  showQuestion();
+}
+</script>
+</body>
+</html>
