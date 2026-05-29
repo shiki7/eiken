@@ -753,7 +753,7 @@ function startFlash() {
   document.getElementById('homeScreen').classList.add('hidden');
   document.getElementById('resultScreen').style.display = 'none';
   document.getElementById('flashScreen').style.display = 'block';
-  showCard();
+  showCard(true);
 }
 
 function shuffle(arr) {
@@ -767,42 +767,61 @@ function shuffle(arr) {
 // ====================================================
 // カード表示
 // ====================================================
-function showCard() {
+function showCard(instant) {
   const w = deck[current];
   isFlipped = false;
 
-  // 表面
-  document.getElementById('enWord').textContent = w.en;
-  document.getElementById('enPhonetic').textContent = w.phonetic;
-  document.getElementById('frontCatTag').textContent = w.cat;
-  document.getElementById('catLabel').textContent = w.cat;
-
-  // 裏面
-  document.getElementById('backEn').textContent = w.en;
-  document.getElementById('cardIllust').textContent = w.illust;
-  document.getElementById('jaReading').textContent = w.ja;
-  document.getElementById('jaDesc').textContent = w.desc;
-  document.getElementById('exampleEn').textContent = w.ex;
-
-  // カード状態リセット
   const fc = document.getElementById('flipCard');
   const fb = document.getElementById('faceBack');
-  fc.classList.remove('flipped');
-  fb.classList.remove('show-anim');
-  document.getElementById('actionRow').classList.remove('show');
 
-  // スコア・進捗
-  const okN = results.filter(r => r.ok === true).length;
-  const ngN = results.filter(r => r.ok === false).length;
-  document.getElementById('okCount').textContent = okN;
-  document.getElementById('ngCount').textContent = ngN;
-  document.getElementById('cardNumDisp').textContent = `${current+1}/${deck.length}`;
-  document.getElementById('cardNumLabel').textContent = `${current+1} まい め / ${deck.length}まい`;
-  document.getElementById('progBar').style.width = `${(current / deck.length) * 100}%`;
+  function applyContent() {
+    // 表面
+    document.getElementById('enWord').textContent = w.en;
+    document.getElementById('enPhonetic').textContent = w.phonetic;
+    document.getElementById('frontCatTag').textContent = w.cat;
+    document.getElementById('catLabel').textContent = w.cat;
 
-  // 次へボタン
-  document.getElementById('nextCardBtn').textContent =
-    current < deck.length - 1 ? 'つぎ →' : '🎉 けっかをみる！';
+    // 裏面
+    document.getElementById('backEn').textContent = w.en;
+    document.getElementById('cardIllust').textContent = w.illust;
+    document.getElementById('jaReading').textContent = w.ja;
+    document.getElementById('jaDesc').textContent = w.desc;
+    document.getElementById('exampleEn').textContent = w.ex;
+
+    fb.classList.remove('show-anim');
+    document.getElementById('actionRow').classList.remove('show');
+
+    // スコア・進捗
+    const okN = results.filter(r => r.ok === true).length;
+    const ngN = results.filter(r => r.ok === false).length;
+    document.getElementById('okCount').textContent = okN;
+    document.getElementById('ngCount').textContent = ngN;
+    document.getElementById('cardNumDisp').textContent = `${current+1}/${deck.length}`;
+    document.getElementById('cardNumLabel').textContent = `${current+1} まい め / ${deck.length}まい`;
+    document.getElementById('progBar').style.width = `${(current / deck.length) * 100}%`;
+
+    // 次へボタン
+    document.getElementById('nextCardBtn').textContent =
+      current < deck.length - 1 ? 'つぎ →' : '🎉 けっかをみる！';
+  }
+
+  if (instant || !fc.classList.contains('flipped')) {
+    // すでに表向き（または即時）→ そのままコンテンツ差し替え
+    fc.classList.remove('flipped');
+    applyContent();
+  } else {
+    // めくれた状態 → まず表に戻してからコンテンツ差し替え
+    // transitionを一時的に無効化して即座に表に戻す
+    fc.style.transition = 'none';
+    fc.classList.remove('flipped');
+    // 1フレーム待ってtransitionを戻し、内容を更新
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        fc.style.transition = '';
+        applyContent();
+      });
+    });
+  }
 }
 
 function flipCard() {
@@ -899,7 +918,7 @@ function retryNg() {
   results = deck.map(w => ({ word: w, ok: null }));
   document.getElementById('resultScreen').style.display = 'none';
   document.getElementById('flashScreen').style.display = 'block';
-  showCard();
+  showCard(true);
 }
 
 function goHome() {
