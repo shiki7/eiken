@@ -1,929 +1,912 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.4">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Helvetica Neue'; -webkit-text-stroke: #000000; background-color: #ffffff}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px 'Helvetica Neue'; -webkit-text-stroke: #000000; background-color: #ffffff; min-height: 15.0px}
-    span.s1 {font-kerning: none}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>えいけん4きゅう たんごカード</title>
+<link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg1: #1a1a2e;
+  --bg2: #16213e;
+  --card-front: #0f3460;
+  --card-back: #e94560;
+  --accent: #f5a623;
+  --green: #27ae60;
+  --white: #ffffff;
+  --soft: #f0f4ff;
+  --text: #ffffff;
+  --shadow: rgba(0,0,0,0.4);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Kosugi Maru', sans-serif;
+  background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 50%, #0d1b2a 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* 星のパーティクル背景 */
+.stars-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle 3s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%,100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 560px;
+  padding: 16px 16px 80px;
+}
+
+/* ヘッダー */
+header {
+  text-align: center;
+  padding: 20px 0 10px;
+}
+header h1 {
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  color: var(--accent);
+  text-shadow: 0 0 20px rgba(245,166,35,0.6);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+header p {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+}
+
+/* カテゴリ選択 */
+#homeScreen {}
+.home-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 24px;
+  padding: 24px 20px;
+  backdrop-filter: blur(10px);
+  margin-bottom: 16px;
+}
+.home-card h2 {
+  font-size: 1.1rem;
+  color: var(--accent);
+  margin-bottom: 16px;
+  text-align: center;
+}
+.cat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.cat-btn {
+  background: rgba(255,255,255,0.08);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 16px;
+  padding: 14px 10px;
+  font-family: inherit;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  font-size: 0.9rem;
+}
+.cat-btn .icon { font-size: 1.8rem; display: block; margin-bottom: 4px; }
+.cat-btn .en-label { font-size: 0.65rem; color: rgba(255,255,255,0.4); display: block; }
+.cat-btn:hover { background: rgba(245,166,35,0.2); border-color: var(--accent); }
+.cat-btn.selected {
+  background: rgba(245,166,35,0.25);
+  border-color: var(--accent);
+  box-shadow: 0 0 16px rgba(245,166,35,0.3);
+}
+.count-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+.count-btn {
+  background: rgba(255,255,255,0.08);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 8px 18px;
+  font-family: inherit;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.count-btn.selected { background: rgba(245,166,35,0.25); border-color: var(--accent); }
+
+.btn-start {
+  width: 100%;
+  margin-top: 14px;
+  padding: 16px;
+  font-family: inherit;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, #e94560, #f5a623);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(233,69,96,0.4);
+  transition: all 0.2s;
+  letter-spacing: 1px;
+}
+.btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(233,69,96,0.5); }
+.btn-start:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+/* ===== フラッシュカード画面 ===== */
+#flashScreen { display: none; }
+
+/* スコアバー */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.score-pill {
+  background: rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  display: flex;
+  gap: 14px;
+}
+.score-pill span { color: rgba(255,255,255,0.6); }
+.score-pill b { color: var(--accent); }
+
+.prog-wrap {
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  margin: 0 12px;
+  overflow: hidden;
+}
+.prog-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #e94560, var(--accent));
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+/* カテゴリ・番号表示 */
+.card-meta {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.45);
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+.cat-tag {
+  background: rgba(233,69,96,0.3);
+  border: 1px solid rgba(233,69,96,0.5);
+  border-radius: 10px;
+  padding: 2px 12px;
+  color: #ff8fa3;
+}
+
+/* ===== フリップカード ===== */
+.flip-scene {
+  width: 100%;
+  perspective: 1200px;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+.flip-card {
+  width: 100%;
+  min-height: 300px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4,0.2,0.2,1);
+  border-radius: 28px;
+}
+.flip-card.flipped { transform: rotateY(180deg); }
+
+.flip-face {
+  position: absolute;
+  width: 100%; height: 100%;
+  min-height: 300px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 24px;
+}
+
+/* 表面：英語 */
+.face-front {
+  background: linear-gradient(135deg, #0f3460 0%, #1a1a4e 100%);
+  border: 2px solid rgba(100,120,255,0.3);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.face-front .hint-tap {
+  position: absolute;
+  bottom: 18px;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+
+.face-front .cat-tag-front {
+  position: absolute;
+  top: 18px; left: 18px;
+  font-size: 0.7rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 3px 12px;
+  color: rgba(255,255,255,0.5);
+}
+
+.en-word {
+  font-size: clamp(2.2rem, 9vw, 3.5rem);
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  letter-spacing: 2px;
+  text-shadow: 0 0 30px rgba(100,120,255,0.5);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.en-phonetic {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 0;
+}
+
+/* ？マーク装飾 */
+.question-deco {
+  position: absolute;
+  font-size: 8rem;
+  color: rgba(255,255,255,0.03);
+  top: 10px; right: 20px;
+  user-select: none;
+  line-height: 1;
+}
+
+/* 裏面：ひらがな＋絵 */
+.face-back {
+  background: linear-gradient(135deg, #1a0a2e 0%, #3d0a1a 100%);
+  border: 2px solid rgba(233,69,96,0.4);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: rotateY(180deg);
+}
+.face-back .back-en {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 6px;
+}
+.face-back .illust {
+  font-size: clamp(3.5rem, 14vw, 6rem);
+  margin-bottom: 10px;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.4));
+  animation: none;
+}
+.face-back.show-anim .illust { animation: popIn 0.4s cubic-bezier(0.3,1.5,0.5,1) 0.1s both; }
+@keyframes popIn { from{transform:scale(0) rotate(-20deg);opacity:0} to{transform:scale(1) rotate(0);opacity:1} }
+
+.face-back .ja-reading {
+  font-size: clamp(1.8rem, 7vw, 2.6rem);
+  color: #ff8fa3;
+  text-shadow: 0 0 20px rgba(233,69,96,0.6);
+  margin-bottom: 6px;
+  text-align: center;
+}
+.face-back .ja-desc {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 260px;
+}
+.face-back .example-en {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.35);
+  font-style: italic;
+}
+
+/* 操作ボタン */
+.action-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.action-btn {
+  flex: 1;
+  padding: 14px 8px;
+  border: none;
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: bold;
+}
+.btn-ok {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: white;
+  box-shadow: 0 4px 16px rgba(39,174,96,0.4);
+}
+.btn-ok:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(39,174,96,0.5); }
+.btn-ng {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  color: white;
+  box-shadow: 0 4px 16px rgba(231,76,60,0.4);
+}
+.btn-ng:hover { transform: translateY(-2px); }
+.btn-skip {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.15);
+  flex: 0 0 auto;
+  padding: 14px 16px;
+}
+
+.action-row { display: none; }
+.action-row.show { display: flex; animation: slideUp 0.3s ease; }
+
+/* ナビボタン */
+.nav-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 0;
+}
+.btn-nav {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.btn-nav:hover { background: rgba(255,255,255,0.15); }
+.btn-nav.primary {
+  background: linear-gradient(135deg, #e94560, #f5a623);
+  border: none;
+  box-shadow: 0 4px 16px rgba(233,69,96,0.4);
+  font-weight: bold;
+}
+.btn-nav.primary:hover { transform: translateY(-2px); }
+
+/* 覚えた / まだ バッジ */
+.know-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+.know-badge.ok { background: rgba(39,174,96,0.2); color: #7dff9e; border: 1px solid rgba(39,174,96,0.4); }
+.know-badge.ng { background: rgba(233,69,96,0.2); color: #ff8fa3; border: 1px solid rgba(233,69,96,0.4); }
+.know-badge.none { display: none; }
+
+/* ===== 結果画面 ===== */
+#resultScreen {
+  display: none;
+  text-align: center;
+  animation: slideUp 0.5s ease;
+}
+.result-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 28px;
+  padding: 32px 24px;
+  backdrop-filter: blur(10px);
+  margin-bottom: 16px;
+}
+.result-emoji { font-size: 5rem; animation: bounce 0.8s ease infinite alternate; margin-bottom: 10px; }
+@keyframes bounce { to { transform: translateY(-12px); } }
+.result-score { font-size: 4rem; font-weight: bold; color: var(--accent); text-shadow: 0 0 30px rgba(245,166,35,0.5); }
+.result-total { font-size: 1.2rem; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+.result-msg { font-size: 1.3rem; color: white; margin: 12px 0 20px; }
+.stars { font-size: 2.2rem; margin-bottom: 16px; }
+
+.result-list-title { font-size: 0.85rem; color: rgba(255,255,255,0.4); margin-bottom: 10px; }
+.result-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
+.result-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  text-align: left;
+}
+.result-item .ri-icon { font-size: 1.4rem; }
+.result-item .ri-en { color: white; font-weight: bold; min-width: 90px; }
+.result-item .ri-ja { color: rgba(255,255,255,0.5); }
+.result-item.ri-ok { border-left: 3px solid var(--green); }
+.result-item.ri-ng { border-left: 3px solid #e94560; }
+
+.retry-btns { display: flex; gap: 10px; margin-top: 10px; }
+.btn-retry {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 16px;
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: bold;
+}
+.btn-retry:hover { transform: translateY(-2px); }
+.btn-r1 { background: linear-gradient(135deg, #8e44ad, #9b59b6); color: white; box-shadow: 0 4px 16px rgba(142,68,173,0.4); }
+.btn-r2 { background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; box-shadow: 0 4px 16px rgba(39,174,96,0.4); }
+
+/* 共通 */
+@keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.hidden { display: none !important; }
+</style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="ja"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;title&gt;えいけん4きゅう たんごカード&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1">&lt;link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&amp;display=swap" rel="stylesheet"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;style&gt;</span></p>
-<p class="p1"><span class="s1">:root {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>--bg1: #1a1a2e;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>--bg2: #16213e;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>--card-front: #0f3460;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>--card-back: #e94560;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>--accent: #f5a623;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>--green: #27ae60;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>--white: #ffffff;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>--soft: #f0f4ff;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>--text: #ffffff;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>--shadow: rgba(0,0,0,0.4);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">* { box-sizing: border-box; margin: 0; padding: 0; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">body {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-family: 'Kosugi Maru', sans-serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 50%, #0d1b2a 100%);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>min-height: 100vh;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>flex-direction: column;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: var(--text);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>overflow-x: hidden;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* 星のパーティクル背景 */</span></p>
-<p class="p1"><span class="s1">.stars-bg {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>position: fixed;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>top: 0; left: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>width: 100%; height: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>pointer-events: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>z-index: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>overflow: hidden;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.star {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 50%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>animation: twinkle 3s ease-in-out infinite;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">@keyframes twinkle {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>0%,100% { opacity: 0.2; transform: scale(1); }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>50% { opacity: 1; transform: scale(1.4); }</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.container {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>z-index: 1;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>max-width: 560px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 16px 16px 80px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* ヘッダー */</span></p>
-<p class="p1"><span class="s1">header {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 20px 0 10px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">header h1 {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: clamp(1.4rem, 5vw, 2rem);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: var(--accent);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>text-shadow: 0 0 20px rgba(245,166,35,0.6);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>letter-spacing: 2px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 4px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">header p {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 0.85rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: rgba(255,255,255,0.6);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* カテゴリ選択 */</span></p>
-<p class="p1"><span class="s1">#homeScreen {}</span></p>
-<p class="p1"><span class="s1">.home-card {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: rgba(255,255,255,0.06);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: 1px solid rgba(255,255,255,0.12);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 24px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 24px 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>backdrop-filter: blur(10px);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 16px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.home-card h2 {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 1.1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: var(--accent);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>text-align: center;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.cat-grid {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: grid;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>grid-template-columns: 1fr 1fr;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>gap: 10px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.cat-btn {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: rgba(255,255,255,0.08);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: 2px solid rgba(255,255,255,0.15);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 14px 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-family: inherit;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>transition: all 0.2s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 0.9rem;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.cat-btn .icon { font-size: 1.8rem; display: block; margin-bottom: 4px; }</span></p>
-<p class="p1"><span class="s1">.cat-btn .en-label { font-size: 0.65rem; color: rgba(255,255,255,0.4); display: block; }</span></p>
-<p class="p1"><span class="s1">.cat-btn:hover { background: rgba(245,166,35,0.2); border-color: var(--accent); }</span></p>
-<p class="p1"><span class="s1">.cat-btn.selected {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: rgba(245,166,35,0.25);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-color: var(--accent);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>box-shadow: 0 0 16px rgba(245,166,35,0.3);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.count-row {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>justify-content: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>gap: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-top: 14px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.count-btn {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: rgba(255,255,255,0.08);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: 2px solid rgba(255,255,255,0.15);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 8px 18px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-family: inherit;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 0.9rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>transition: all 0.2s;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.count-btn.selected { background: rgba(245,166,35,0.25); border-color: var(--accent); }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.btn-start {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-top: 14px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-family: inherit;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 1.2rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: linear-gradient(135deg, #e94560, #f5a623);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 18px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>box-shadow: 0 6px 24px rgba(233,69,96,0.4);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>transition: all 0.2s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>letter-spacing: 1px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(233,69,96,0.5); }</span></p>
-<p class="p1"><span class="s1">.btn-start:disabled { opacity: 0.4; cursor: default; transform: none; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* ===== フラッシュカード画面 ===== */</span></p>
-<p class="p1"><span class="s1">#flashScreen { display: none; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* スコアバー */</span></p>
-<p class="p1"><span class="s1">.topbar {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>justify-content: space-between;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 14px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.score-pill {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: rgba(255,255,255,0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 6px 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 0.85rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>gap: 14px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.score-pill span { color: rgba(255,255,255,0.6); }</span></p>
-<p class="p1"><span class="s1">.score-pill b { color: var(--accent); }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.prog-wrap {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>flex: 1;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>height: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: rgba(255,255,255,0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin: 0 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>overflow: hidden;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.prog-bar {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>height: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: linear-gradient(90deg, #e94560, var(--accent));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>transition: width 0.5s ease;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* カテゴリ・番号表示 */</span></p>
-<p class="p1"><span class="s1">.card-meta {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 0.8rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: rgba(255,255,255,0.45);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>justify-content: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>gap: 12px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.cat-tag {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: rgba(233,69,96,0.3);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: 1px solid rgba(233,69,96,0.5);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 2px 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: #ff8fa3;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* ===== フリップカード ===== */</span></p>
-<p class="p1"><span class="s1">.flip-scene {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>perspective: 1200px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.flip-card {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>min-height: 300px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>transform-style: preserve-3d;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>transition: transform 0.6s cubic-bezier(0.4,0.2,0.2,1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 28px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.flip-card.flipped { transform: rotateY(180deg); }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.flip-face {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>width: 100%; height: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>min-height: 300px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>backface-visibility: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>-webkit-backface-visibility: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 28px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>flex-direction: column;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>justify-content: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 30px 24px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* 表面：英語 */</span></p>
-<p class="p1"><span class="s1">.face-front {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: linear-gradient(135deg, #0f3460 0%, #1a1a4e 100%);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: 2px solid rgba(100,120,255,0.3);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.face-front .hint-tap {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>bottom: 18px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 0.75rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: rgba(255,255,255,0.3);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>gap: 4px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>animation: pulse 2s ease-in-out infinite;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">@keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.face-front .cat-tag-front {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>top: 18px; left: 18px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 0.7rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: rgba(255,255,255,0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 3px 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: rgba(255,255,255,0.5);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.en-word {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: clamp(2.2rem, 9vw, 3.5rem);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>letter-spacing: 2px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>text-shadow: 0 0 30px rgba(100,120,255,0.5);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>line-height: 1.2;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.en-phonetic {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: rgba(255,255,255,0.4);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 0;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* ？マーク装飾 */</span></p>
-<p class="p1"><span class="s1">.question-deco {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 8rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: rgba(255,255,255,0.03);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>top: 10px; right: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>user-select: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>line-height: 1;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* 裏面：ひらがな＋絵 */</span></p>
-<p class="p1"><span class="s1">.face-back {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: linear-gradient(135deg, #1a0a2e 0%, #3d0a1a 100%);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: 2px solid rgba(233,69,96,0.4);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>box-shadow: 0 12px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>transform: rotateY(180deg);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.face-back .back-en {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: rgba(255,255,255,0.4);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 6px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.face-back .illust {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: clamp(3.5rem, 14vw, 6rem);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>filter: drop-shadow(0 4px 16px rgba(0,0,0,0.4));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>animation: none;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.face-back.show-anim .illust { animation: popIn 0.4s cubic-bezier(0.3,1.5,0.5,1) 0.1s both; }</span></p>
-<p class="p1"><span class="s1">@keyframes popIn { from{transform:scale(0) rotate(-20deg);opacity:0} to{transform:scale(1) rotate(0);opacity:1} }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.face-back .ja-reading {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: clamp(1.8rem, 7vw, 2.6rem);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: #ff8fa3;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>text-shadow: 0 0 20px rgba(233,69,96,0.6);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 6px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>text-align: center;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.face-back .ja-desc {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 0.9rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: rgba(255,255,255,0.5);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>line-height: 1.6;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>max-width: 260px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.face-back .example-en {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-top: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 0.85rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: rgba(255,255,255,0.35);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-style: italic;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* 操作ボタン */</span></p>
-<p class="p1"><span class="s1">.action-row {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>gap: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 12px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.action-btn {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>flex: 1;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 14px 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-family: inherit;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>transition: all 0.2s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.btn-ok {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: linear-gradient(135deg, #27ae60, #2ecc71);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>box-shadow: 0 4px 16px rgba(39,174,96,0.4);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.btn-ok:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(39,174,96,0.5); }</span></p>
-<p class="p1"><span class="s1">.btn-ng {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: linear-gradient(135deg, #c0392b, #e74c3c);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>box-shadow: 0 4px 16px rgba(231,76,60,0.4);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.btn-ng:hover { transform: translateY(-2px); }</span></p>
-<p class="p1"><span class="s1">.btn-skip {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: rgba(255,255,255,0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: rgba(255,255,255,0.6);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: 1px solid rgba(255,255,255,0.15);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>flex: 0 0 auto;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 14px 16px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.action-row { display: none; }</span></p>
-<p class="p1"><span class="s1">.action-row.show { display: flex; animation: slideUp 0.3s ease; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* ナビボタン */</span></p>
-<p class="p1"><span class="s1">.nav-row {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>gap: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-top: 0;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.btn-nav {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>flex: 1;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 14px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-family: inherit;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>transition: all 0.2s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: rgba(255,255,255,0.08);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: 1px solid rgba(255,255,255,0.15);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.btn-nav:hover { background: rgba(255,255,255,0.15); }</span></p>
-<p class="p1"><span class="s1">.btn-nav.primary {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: linear-gradient(135deg, #e94560, #f5a623);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>box-shadow: 0 4px 16px rgba(233,69,96,0.4);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.btn-nav.primary:hover { transform: translateY(-2px); }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* 覚えた / まだ バッジ */</span></p>
-<p class="p1"><span class="s1">.know-badge {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: inline-flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>gap: 6px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 0.75rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 4px 14px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 10px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.know-badge.ok { background: rgba(39,174,96,0.2); color: #7dff9e; border: 1px solid rgba(39,174,96,0.4); }</span></p>
-<p class="p1"><span class="s1">.know-badge.ng { background: rgba(233,69,96,0.2); color: #ff8fa3; border: 1px solid rgba(233,69,96,0.4); }</span></p>
-<p class="p1"><span class="s1">.know-badge.none { display: none; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* ===== 結果画面 ===== */</span></p>
-<p class="p1"><span class="s1">#resultScreen {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>animation: slideUp 0.5s ease;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.result-card {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: rgba(255,255,255,0.06);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: 1px solid rgba(255,255,255,0.12);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 28px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 32px 24px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>backdrop-filter: blur(10px);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>margin-bottom: 16px;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.result-emoji { font-size: 5rem; animation: bounce 0.8s ease infinite alternate; margin-bottom: 10px; }</span></p>
-<p class="p1"><span class="s1">@keyframes bounce { to { transform: translateY(-12px); } }</span></p>
-<p class="p1"><span class="s1">.result-score { font-size: 4rem; font-weight: bold; color: var(--accent); text-shadow: 0 0 30px rgba(245,166,35,0.5); }</span></p>
-<p class="p1"><span class="s1">.result-total { font-size: 1.2rem; color: rgba(255,255,255,0.5); margin-bottom: 8px; }</span></p>
-<p class="p1"><span class="s1">.result-msg { font-size: 1.3rem; color: white; margin: 12px 0 20px; }</span></p>
-<p class="p1"><span class="s1">.stars { font-size: 2.2rem; margin-bottom: 16px; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.result-list-title { font-size: 0.85rem; color: rgba(255,255,255,0.4); margin-bottom: 10px; }</span></p>
-<p class="p1"><span class="s1">.result-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }</span></p>
-<p class="p1"><span class="s1">.result-item {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>gap: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>background: rgba(255,255,255,0.05);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 8px 14px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 0.9rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>text-align: left;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.result-item .ri-icon { font-size: 1.4rem; }</span></p>
-<p class="p1"><span class="s1">.result-item .ri-en { color: white; font-weight: bold; min-width: 90px; }</span></p>
-<p class="p1"><span class="s1">.result-item .ri-ja { color: rgba(255,255,255,0.5); }</span></p>
-<p class="p1"><span class="s1">.result-item.ri-ok { border-left: 3px solid var(--green); }</span></p>
-<p class="p1"><span class="s1">.result-item.ri-ng { border-left: 3px solid #e94560; }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">.retry-btns { display: flex; gap: 10px; margin-top: 10px; }</span></p>
-<p class="p1"><span class="s1">.btn-retry {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>flex: 1;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>padding: 14px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>border-radius: 16px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-family: inherit;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-size: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>transition: all 0.2s;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">.btn-retry:hover { transform: translateY(-2px); }</span></p>
-<p class="p1"><span class="s1">.btn-r1 { background: linear-gradient(135deg, #8e44ad, #9b59b6); color: white; box-shadow: 0 4px 16px rgba(142,68,173,0.4); }</span></p>
-<p class="p1"><span class="s1">.btn-r2 { background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; box-shadow: 0 4px 16px rgba(39,174,96,0.4); }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">/* 共通 */</span></p>
-<p class="p1"><span class="s1">@keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }</span></p>
-<p class="p1"><span class="s1">.hidden { display: none !important; }</span></p>
-<p class="p1"><span class="s1">&lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;!-- 星背景 --&gt;</span></p>
-<p class="p1"><span class="s1">&lt;div class="stars-bg" id="starsContainer"&gt;&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;div class="container"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;header&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;h1&gt;✨ えいけん4きゅう ✨&lt;/h1&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;p&gt;たんごフラッシュカード&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/header&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- ホーム --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div id="homeScreen"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="home-card"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;h2&gt;📂 カテゴリをえらぼう&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="cat-grid" id="catGrid"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="home-card"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;h2&gt;🔢 なんまいにする？&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="count-row"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button class="count-btn" onclick="setCount(10,this)"&gt;10まい&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button class="count-btn selected" onclick="setCount(20,this)"&gt;20まい&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;button class="count-btn" onclick="setCount(30,this)"&gt;30まい&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;button class="btn-start" id="startBtn" onclick="startFlash()" disabled&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>🚀 スタート！</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- フラッシュ --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div id="flashScreen"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="topbar"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="score-pill"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;span&gt;おぼえた &lt;b id="okCount"&gt;0&lt;/b&gt;&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;span&gt;まだ &lt;b id="ngCount"&gt;0&lt;/b&gt;&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="prog-wrap"&gt;&lt;div class="prog-bar" id="progBar" style="width:0%"&gt;&lt;/div&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div style="font-size:0.8rem;color:rgba(255,255,255,0.4)" id="cardNumDisp"&gt;1/20&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="card-meta"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;span class="cat-tag" id="catLabel"&gt;&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;span id="cardNumLabel"&gt;&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="flip-scene" id="flipScene" onclick="flipCard()"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="flip-card" id="flipCard"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;!-- 表：英語 --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="flip-face face-front"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="question-deco"&gt;？&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;span class="cat-tag-front" id="frontCatTag"&gt;&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="en-word" id="enWord"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="en-phonetic" id="enPhonetic"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="hint-tap"&gt;👆 タップして こたえを みる&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;!-- 裏：ひらがな＋絵 --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="flip-face face-back" id="faceBack"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="back-en" id="backEn"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="illust" id="cardIllust"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="ja-reading" id="jaReading"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="ja-desc" id="jaDesc"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="example-en" id="exampleEn"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;!-- 覚えた？ボタン（めくった後に表示） --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="action-row" id="actionRow"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;button class="action-btn btn-ok" onclick="markCard(true)"&gt;✅ おぼえた！&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;button class="action-btn btn-ng" onclick="markCard(false)"&gt;❌ もういちど&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="nav-row"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;button class="btn-nav" onclick="prevCard()"&gt;← まえ&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;button class="btn-nav primary" id="nextCardBtn" onclick="nextCard()"&gt;つぎ →&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- けっか --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div id="resultScreen"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="result-card"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="result-emoji" id="resEmoji"&gt;🎉&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="result-score" id="resScore"&gt;0&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="result-total" id="resTotal"&gt;/ 20まい&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="stars" id="resStars"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="result-msg" id="resMsg"&gt;&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="result-list-title"&gt;📋 このセッションのたんご&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div class="result-list" id="resultList"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="retry-btns"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;button class="btn-retry btn-r1" onclick="retryNg()"&gt;❌ まちがいだけ もういちど&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;button class="btn-retry btn-r2" onclick="goHome()"&gt;🏠 ホームへ&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;script&gt;</span></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">// データ：英検4級レベル単語（絵文字・ひらがな・説明付き）</span></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">const WORDS = [</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 自然・天気</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'しぜん', en:'mountain', phonetic:'/ˈmaʊntən/', illust:'🏔️', ja:'やま', desc:'たかくて おおきな やま', ex:'Let\'s climb the mountain.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'しぜん', en:'river', phonetic:'/ˈrɪvər/', illust:'🏞️', ja:'かわ', desc:'ながれる みず のこと', ex:'The river is wide.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'しぜん', en:'forest', phonetic:'/ˈfɔːrɪst/', illust:'🌲', ja:'もり', desc:'きがたくさん はえている ところ', ex:'A fox lives in the forest.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'しぜん', en:'ocean', phonetic:'/ˈoʊʃən/', illust:'🌊', ja:'うみ（たいよう）', desc:'とても ひろい うみ', ex:'Whales live in the ocean.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'しぜん', en:'sky', phonetic:'/skaɪ/', illust:'🌤️', ja:'そら', desc:'うえを みると ある そら', ex:'The sky is blue today.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'しぜん', en:'cloud', phonetic:'/klaʊd/', illust:'☁️', ja:'くも', desc:'そらに うかぶ しろい くも', ex:'Dark clouds are coming.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'しぜん', en:'rain', phonetic:'/reɪn/', illust:'🌧️', ja:'あめ', desc:'そらから おちてくる みず', ex:'It will rain tomorrow.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'しぜん', en:'snow', phonetic:'/snoʊ/', illust:'❄️', ja:'ゆき', desc:'ふゆに そらから ふってくる しろいもの', ex:'Snow falls in winter.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'しぜん', en:'wind', phonetic:'/wɪnd/', illust:'💨', ja:'かぜ', desc:'ふいてくる かぜ', ex:'The wind is strong today.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'しぜん', en:'flower', phonetic:'/ˈflaʊər/', illust:'🌸', ja:'はな', desc:'きれいな いろの はな', ex:'This flower is beautiful.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'しぜん', en:'tree', phonetic:'/triː/', illust:'🌳', ja:'き', desc:'だいちに はえる おおきな き', ex:'A bird is in the tree.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'しぜん', en:'lake', phonetic:'/leɪk/', illust:'🏊', ja:'みずうみ', desc:'りくに かこまれた みず', ex:'We swam in the lake.' },</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 食べ物・飲み物</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'たべもの', en:'breakfast', phonetic:'/ˈbrekfəst/', illust:'🍳', ja:'あさごはん', desc:'あさ たべる しょくじ', ex:'I eat breakfast at 7.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'たべもの', en:'lunch', phonetic:'/lʌntʃ/', illust:'🍱', ja:'ひるごはん', desc:'ひるに たべる しょくじ', ex:'Let\'s have lunch together.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'たべもの', en:'dinner', phonetic:'/ˈdɪnər/', illust:'🍽️', ja:'ばんごはん', desc:'よる たべる しょくじ', ex:'Dinner is at 6 o\'clock.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'たべもの', en:'rice', phonetic:'/raɪs/', illust:'🍚', ja:'ごはん・こめ', desc:'にほんの たいせつな しょくじ', ex:'I like rice very much.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'たべもの', en:'salad', phonetic:'/ˈsæləd/', illust:'🥗', ja:'サラダ', desc:'やさいで つくった りょうり', ex:'She made a big salad.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'たべもの', en:'pizza', phonetic:'/ˈpiːtsə/', illust:'🍕', ja:'ピザ', desc:'イタリアの たべもの', ex:'Pizza is my favorite food.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'たべもの', en:'sandwich', phonetic:'/ˈsænwɪtʃ/', illust:'🥪', ja:'サンドイッチ', desc:'パンで はさんだ たべもの', ex:'I made a sandwich for lunch.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'たべもの', en:'soup', phonetic:'/suːp/', illust:'🍲', ja:'スープ', desc:'あつい しるもの', ex:'This soup is delicious.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'たべもの', en:'chocolate', phonetic:'/ˈtʃɒklət/', illust:'🍫', ja:'チョコレート', desc:'あまい おかし', ex:'I love chocolate cake.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'たべもの', en:'ice cream', phonetic:'/ˈaɪs kriːm/', illust:'🍦', ja:'アイスクリーム', desc:'つめたくて あまい おかし', ex:'Let\'s get some ice cream.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'たべもの', en:'coffee', phonetic:'/ˈkɒfi/', illust:'☕', ja:'コーヒー', desc:'あたたかい のみもの', ex:'Mom drinks coffee every morning.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'たべもの', en:'juice', phonetic:'/dʒuːs/', illust:'🧃', ja:'ジュース', desc:'くだものから つくった のみもの', ex:'Orange juice is sweet.' },</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 学校・勉強</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'がっこう', en:'classroom', phonetic:'/ˈklɑːsruːm/', illust:'🏫', ja:'きょうしつ', desc:'じゅぎょうを うける へや', ex:'Our classroom is on the 2nd floor.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'がっこう', en:'blackboard', phonetic:'/ˈblækbɔːrd/', illust:'🖊️', ja:'こくばん', desc:'チョークで かく ばん', ex:'Look at the blackboard.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'がっこう', en:'notebook', phonetic:'/ˈnoʊtbʊk/', illust:'📓', ja:'ノート', desc:'じゅぎょうの メモを とる もの', ex:'Write in your notebook.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'がっこう', en:'dictionary', phonetic:'/ˈdɪkʃəneri/', illust:'📖', ja:'じしょ', desc:'ことばの いみを しらべる ほん', ex:'Use your dictionary.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'がっこう', en:'homework', phonetic:'/ˈhoʊmwɜːrk/', illust:'✏️', ja:'しゅくだい', desc:'いえで やる べんきょう', ex:'I finished my homework.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'がっこう', en:'test', phonetic:'/test/', illust:'📝', ja:'テスト・しけん', desc:'べんきょうした ことを たしかめる', ex:'We have a test tomorrow.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'がっこう', en:'subject', phonetic:'/ˈsʌbdʒɪkt/', illust:'🔬', ja:'きょうか・かもく', desc:'りか・すうがく などの こと', ex:'My favorite subject is science.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'がっこう', en:'library', phonetic:'/ˈlaɪbreri/', illust:'📚', ja:'としょかん', desc:'ほんを かりる ところ', ex:'I go to the library after school.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'がっこう', en:'vacation', phonetic:'/veɪˈkeɪʃən/', illust:'🏖️', ja:'やすみ・きゅうか', desc:'がっこうが やすみの じかん', ex:'Summer vacation is fun.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'がっこう', en:'club', phonetic:'/klʌb/', illust:'⚽', ja:'クラブ・ぶかつ', desc:'がっこうの ぶかつどう', ex:'I\'m in the soccer club.' },</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// スポーツ・趣味</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'スポーツ', en:'swimming', phonetic:'/ˈswɪmɪŋ/', illust:'🏊', ja:'すいえい', desc:'みずの なかを およぐ スポーツ', ex:'Swimming is good exercise.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'スポーツ', en:'tennis', phonetic:'/ˈtenɪs/', illust:'🎾', ja:'テニス', desc:'ラケットで ボールを うつ スポーツ', ex:'She plays tennis every day.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'スポーツ', en:'baseball', phonetic:'/ˈbeɪsbɔːl/', illust:'⚾', ja:'やきゅう', desc:'にほんで にんきの スポーツ', ex:'Baseball is popular in Japan.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'スポーツ', en:'basketball', phonetic:'/ˈbæskɪtbɔːl/', illust:'🏀', ja:'バスケットボール', desc:'たかい ゴールに いれる スポーツ', ex:'Let\'s play basketball.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'スポーツ', en:'skiing', phonetic:'/ˈskiːɪŋ/', illust:'⛷️', ja:'スキー', desc:'ゆきやまを すべる スポーツ', ex:'I went skiing in winter.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'スポーツ', en:'cycling', phonetic:'/ˈsaɪklɪŋ/', illust:'🚴', ja:'サイクリング', desc:'じてんしゃで はしること', ex:'Cycling is fun and healthy.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'スポーツ', en:'music', phonetic:'/ˈmjuːzɪk/', illust:'🎵', ja:'おんがく', desc:'うたや がっきの こと', ex:'I like listening to music.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'スポーツ', en:'movie', phonetic:'/ˈmuːvi/', illust:'🎬', ja:'えいが', desc:'えいがかんで みる もの', ex:'Let\'s watch a movie tonight.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'スポーツ', en:'camping', phonetic:'/ˈkæmpɪŋ/', illust:'⛺', ja:'キャンプ', desc:'そとで テントに とまること', ex:'We went camping last summer.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'スポーツ', en:'painting', phonetic:'/ˈpeɪntɪŋ/', illust:'🎨', ja:'えをかくこと', desc:'いろを つかって えを かく', ex:'She loves painting pictures.' },</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 場所・建物</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'ばしょ', en:'hospital', phonetic:'/ˈhɒspɪtl/', illust:'🏥', ja:'びょういん', desc:'びょうきを なおす ところ', ex:'My mother works at a hospital.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'ばしょ', en:'supermarket', phonetic:'/ˈsuːpərmɑːrkɪt/', illust:'🛒', ja:'スーパーマーケット', desc:'たべものを かう みせ', ex:'Let\'s go to the supermarket.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'ばしょ', en:'airport', phonetic:'/ˈeərpɔːrt/', illust:'✈️', ja:'くうこう', desc:'ひこうきが とびたつ ところ', ex:'We arrived at the airport.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'ばしょ', en:'museum', phonetic:'/mjuːˈziːəm/', illust:'🏛️', ja:'はくぶつかん', desc:'むかしの ものを てんじする ところ', ex:'Let\'s visit the museum.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'ばしょ', en:'restaurant', phonetic:'/ˈrestərɒnt/', illust:'🍴', ja:'レストラン', desc:'りょうりを たべさせてくれる みせ', ex:'This restaurant is very popular.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'ばしょ', en:'post office', phonetic:'/poʊst ˈɒfɪs/', illust:'📮', ja:'ゆうびんきょく', desc:'てがみや にもつを おくる ところ', ex:'I went to the post office.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'ばしょ', en:'stadium', phonetic:'/ˈsteɪdiəm/', illust:'🏟️', ja:'スタジアム', desc:'スポーツを みる おおきな しせつ', ex:'The stadium holds 50,000 people.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'ばしょ', en:'station', phonetic:'/ˈsteɪʃən/', illust:'🚉', ja:'えき', desc:'でんしゃが とまる ところ', ex:'Meet me at the station.' },</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 身体・健康</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'からだ', en:'headache', phonetic:'/ˈhedeɪk/', illust:'🤕', ja:'ずつう・あたまいた', desc:'あたまが いたいこと', ex:'I have a headache today.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'からだ', en:'stomachache', phonetic:'/ˈstʌməkeɪk/', illust:'🤢', ja:'おなかいた', desc:'おなかが いたいこと', ex:'He has a stomachache.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'からだ', en:'tired', phonetic:'/ˈtaɪərd/', illust:'😴', ja:'つかれた', desc:'とても つかれた ようす', ex:'I\'m very tired today.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'からだ', en:'hungry', phonetic:'/ˈhʌŋɡri/', illust:'😋', ja:'おなかが すいた', desc:'たべものを たべたい きもち', ex:'I\'m so hungry!' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'からだ', en:'thirsty', phonetic:'/ˈθɜːrsti/', illust:'🥤', ja:'のどが かわいた', desc:'みずを のみたい きもち', ex:'Are you thirsty?' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'からだ', en:'healthy', phonetic:'/ˈhelθi/', illust:'💪', ja:'けんこうな', desc:'からだが げんきな ようす', ex:'Exercise keeps you healthy.' },</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 形容詞</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'けいようし', en:'beautiful', phonetic:'/ˈbjuːtɪfl/', illust:'😍', ja:'うつくしい・きれい', desc:'とても きれいな ようす', ex:'What a beautiful sunset!' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'けいようし', en:'exciting', phonetic:'/ɪkˈsaɪtɪŋ/', illust:'🤩', ja:'わくわくする・たのしい', desc:'どきどき わくわくする ようす', ex:'The game was so exciting.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'けいようし', en:'delicious', phonetic:'/dɪˈlɪʃəs/', illust:'😋', ja:'おいしい', desc:'とても おいしい たべもの', ex:'This cake is delicious.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'けいようし', en:'difficult', phonetic:'/ˈdɪfɪkəlt/', illust:'😓', ja:'むずかしい', desc:'むずかしくて てごわい', ex:'Math is difficult for me.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'けいようし', en:'popular', phonetic:'/ˈpɒpjələr/', illust:'⭐', ja:'にんきがある', desc:'みんなに すかれている ようす', ex:'Soccer is popular in Japan.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'けいようし', en:'surprised', phonetic:'/səˈpraɪzd/', illust:'😮', ja:'おどろいた', desc:'びっくりした ようす', ex:'I was surprised by the news.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'けいようし', en:'nervous', phonetic:'/ˈnɜːrvəs/', illust:'😰', ja:'きんちょうした', desc:'ドキドキ きんちょうしている', ex:'I\'m nervous about the test.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'けいようし', en:'comfortable', phonetic:'/ˈkʌmftəbl/', illust:'😊', ja:'きもちいい・らくな', desc:'らくで きもちよい ようす', ex:'This chair is very comfortable.' },</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 動詞</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'どうし', en:'enjoy', phonetic:'/ɪnˈdʒɔɪ/', illust:'😄', ja:'たのしむ', desc:'なにかを たのしむ ようす', ex:'I enjoy playing soccer.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'どうし', en:'visit', phonetic:'/ˈvɪzɪt/', illust:'🗺️', ja:'おとずれる・たずねる', desc:'どこかへ いく こと', ex:'Let\'s visit Kyoto.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'どうし', en:'help', phonetic:'/help/', illust:'🤝', ja:'てつだう・たすける', desc:'だれかを てつだうこと', ex:'Can you help me?' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'どうし', en:'remember', phonetic:'/rɪˈmembər/', illust:'🧠', ja:'おぼえる・おもいだす', desc:'わすれずに おぼえておくこと', ex:'Remember to bring your book.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'どうし', en:'arrive', phonetic:'/əˈraɪv/', illust:'🎯', ja:'とうちゃくする', desc:'めてきちに つくこと', ex:'We arrived at the hotel.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'どうし', en:'collect', phonetic:'/kəˈlekt/', illust:'🗃️', ja:'あつめる', desc:'いろいろな ものを あつめること', ex:'I collect stamps.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'どうし', en:'practice', phonetic:'/ˈpræktɪs/', illust:'🎯', ja:'れんしゅうする', desc:'うまくなるために くりかえすこと', ex:'Practice makes perfect.' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>{ cat:'どうし', en:'prepare', phonetic:'/prɪˈpeər/', illust:'📋', ja:'じゅんびする', desc:'まえもって よういすること', ex:'Prepare for the test.' },</span></p>
-<p class="p1"><span class="s1">];</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">// カテゴリ一覧を抽出</span></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">const CATS_META = {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>'しぜん':<span class="Apple-converted-space">    </span>{ icon:'🌿', en:'nature' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>'たべもの':<span class="Apple-converted-space">  </span>{ icon:'🍔', en:'food' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>'がっこう':<span class="Apple-converted-space">  </span>{ icon:'✏️', en:'school' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>'スポーツ':<span class="Apple-converted-space">  </span>{ icon:'⚽', en:'sports/hobby' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>'ばしょ':<span class="Apple-converted-space">    </span>{ icon:'📍', en:'places' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>'からだ':<span class="Apple-converted-space">    </span>{ icon:'💪', en:'health' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>'けいようし':{ icon:'💬', en:'adjectives' },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>'どうし':<span class="Apple-converted-space">    </span>{ icon:'🏃', en:'verbs' },</span></p>
-<p class="p1"><span class="s1">};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">// 状態</span></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">let selectedCats = [];</span></p>
-<p class="p1"><span class="s1">let cardCount = 20;</span></p>
-<p class="p1"><span class="s1">let deck = [];</span></p>
-<p class="p1"><span class="s1">let current = 0;</span></p>
-<p class="p1"><span class="s1">let isFlipped = false;</span></p>
-<p class="p1"><span class="s1">let results = []; // {word, ok: bool}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">// 初期化</span></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">window.onload = () =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 星を生成</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const sc = document.getElementById('starsContainer');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>for (let i = 0; i &lt; 60; i++) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const s = document.createElement('div');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>s.className = 'star';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const size = Math.random() * 3 + 1;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>sc.appendChild(s);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>buildCatGrid();</span></p>
-<p class="p1"><span class="s1">};</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function buildCatGrid() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const grid = document.getElementById('catGrid');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>grid.innerHTML = '';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>Object.entries(CATS_META).forEach(([cat, meta]) =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const count = WORDS.filter(w =&gt; w.cat === cat).length;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const btn = document.createElement('button');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>btn.className = 'cat-btn';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>btn.innerHTML = `&lt;span class="icon"&gt;${meta.icon}&lt;/span&gt;${cat}&lt;span class="en-label"&gt;${meta.en} / ${count}たんご&lt;/span&gt;`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>btn.onclick = () =&gt; toggleCat(btn, cat);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>grid.appendChild(btn);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function toggleCat(btn, cat) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (btn.classList.contains('selected')) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>btn.classList.remove('selected');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>selectedCats = selectedCats.filter(c =&gt; c !== cat);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>btn.classList.add('selected');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>selectedCats.push(cat);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('startBtn').disabled = selectedCats.length === 0;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function setCount(n, btn) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>cardCount = n;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.querySelectorAll('.count-btn').forEach(b =&gt; b.classList.remove('selected'));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>btn.classList.add('selected');</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">// フラッシュ開始</span></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">function startFlash() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const pool = WORDS.filter(w =&gt; selectedCats.includes(w.cat));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>deck = shuffle([...pool]).slice(0, Math.min(cardCount, pool.length));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>current = 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>results = deck.map(w =&gt; ({ word: w, ok: null }));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('homeScreen').classList.add('hidden');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('resultScreen').style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('flashScreen').style.display = 'block';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>showCard();</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function shuffle(arr) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>for (let i = arr.length - 1; i &gt; 0; i--) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const j = Math.floor(Math.random() * (i + 1));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>[arr[i], arr[j]] = [arr[j], arr[i]];</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>return arr;</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">// カード表示</span></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">function showCard() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const w = deck[current];</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>isFlipped = false;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 表面</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('enWord').textContent = w.en;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('enPhonetic').textContent = w.phonetic;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('frontCatTag').textContent = w.cat;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('catLabel').textContent = w.cat;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 裏面</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('backEn').textContent = w.en;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('cardIllust').textContent = w.illust;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('jaReading').textContent = w.ja;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('jaDesc').textContent = w.desc;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('exampleEn').textContent = w.ex;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// カード状態リセット</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const fc = document.getElementById('flipCard');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const fb = document.getElementById('faceBack');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>fc.classList.remove('flipped');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>fb.classList.remove('show-anim');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('actionRow').classList.remove('show');</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// スコア・進捗</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const okN = results.filter(r =&gt; r.ok === true).length;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const ngN = results.filter(r =&gt; r.ok === false).length;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('okCount').textContent = okN;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('ngCount').textContent = ngN;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('cardNumDisp').textContent = `${current+1}/${deck.length}`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('cardNumLabel').textContent = `${current+1} まい め / ${deck.length}まい`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('progBar').style.width = `${(current / deck.length) * 100}%`;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// 次へボタン</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('nextCardBtn').textContent =</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>current &lt; deck.length - 1 ? 'つぎ →' : '🎉 けっかをみる！';</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function flipCard() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (isFlipped) return;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>isFlipped = true;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const fc = document.getElementById('flipCard');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const fb = document.getElementById('faceBack');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>fc.classList.add('flipped');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>setTimeout(() =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>fb.classList.add('show-anim');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>document.getElementById('actionRow').classList.add('show');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}, 350);</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function markCard(ok) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>results[current].ok = ok;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>nextCard();</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function nextCard() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>current++;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (current &gt;= deck.length) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>showResult();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>showCard();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function prevCard() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (current &gt; 0) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>current--;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>showCard();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">// 結果</span></p>
-<p class="p1"><span class="s1">// ====================================================</span></p>
-<p class="p1"><span class="s1">function showResult() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('flashScreen').style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('resultScreen').style.display = 'block';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('progBar').style.width = '100%';</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const total = deck.length;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const okN = results.filter(r =&gt; r.ok === true).length;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const pct = okN / total;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('resScore').textContent = okN;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('resTotal').textContent = `/ ${total}まい おぼえた`;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>let emoji, stars, msg;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (pct &gt;= 0.9) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>emoji = '🏆'; stars = '⭐⭐⭐'; msg = 'かんぺき！えいごの てんさい！🎊';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>} else if (pct &gt;= 0.7) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>emoji = '🌟'; stars = '⭐⭐'; msg = 'すごい！よくおぼえてたね！';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>} else if (pct &gt;= 0.5) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>emoji = '💪'; stars = '⭐'; msg = 'がんばったね！もうすこしで かんぺき！';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>emoji = '🌱'; stars = '🔥'; msg = 'まちがえた ところを もう いちど！';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('resEmoji').textContent = emoji;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('resStars').textContent = stars;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('resMsg').textContent = msg;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// リスト</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const list = document.getElementById('resultList');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>list.innerHTML = '';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>results.forEach(r =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const w = r.word;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const div = document.createElement('div');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const status = r.ok === true ? 'ri-ok' : r.ok === false ? 'ri-ng' : '';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const badge = r.ok === true ? '✅' : r.ok === false ? '❌' : '－';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>div.className = `result-item ${status}`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>div.innerHTML = `</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;span class="ri-icon"&gt;${w.illust}&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;span class="ri-en"&gt;${badge} ${w.en}&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;span class="ri-ja"&gt;${w.ja}&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>list.appendChild(div);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>});</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>// まちがいのみ再挑戦ボタン</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const ngList = results.filter(r =&gt; r.ok === false).map(r =&gt; r.word);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const retryBtn = document.querySelector('.btn-r1');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>retryBtn.disabled = ngList.length === 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>retryBtn.style.opacity = ngList.length === 0 ? '0.4' : '1';</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function retryNg() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>const ngWords = results.filter(r =&gt; r.ok === false).map(r =&gt; r.word);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>if (ngWords.length === 0) return;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>deck = shuffle([...ngWords]);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>current = 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>results = deck.map(w =&gt; ({ word: w, ok: null }));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('resultScreen').style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('flashScreen').style.display = 'block';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>showCard();</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">function goHome() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('resultScreen').style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('flashScreen').style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>document.getElementById('homeScreen').classList.remove('hidden');</span></p>
-<p class="p1"><span class="s1">}</span></p>
-<p class="p1"><span class="s1">&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+
+<!-- 星背景 -->
+<div class="stars-bg" id="starsContainer"></div>
+
+<div class="container">
+  <header>
+    <h1>✨ えいけん4きゅう ✨</h1>
+    <p>たんごフラッシュカード</p>
+  </header>
+
+  <!-- ホーム -->
+  <div id="homeScreen">
+    <div class="home-card">
+      <h2>📂 カテゴリをえらぼう</h2>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+    <div class="home-card">
+      <h2>🔢 なんまいにする？</h2>
+      <div class="count-row">
+        <button class="count-btn" onclick="setCount(10,this)">10まい</button>
+        <button class="count-btn selected" onclick="setCount(20,this)">20まい</button>
+        <button class="count-btn" onclick="setCount(30,this)">30まい</button>
+      </div>
+    </div>
+    <button class="btn-start" id="startBtn" onclick="startFlash()" disabled>
+      🚀 スタート！
+    </button>
+  </div>
+
+  <!-- フラッシュ -->
+  <div id="flashScreen">
+    <div class="topbar">
+      <div class="score-pill">
+        <span>おぼえた <b id="okCount">0</b></span>
+        <span>まだ <b id="ngCount">0</b></span>
+      </div>
+      <div class="prog-wrap"><div class="prog-bar" id="progBar" style="width:0%"></div></div>
+      <div style="font-size:0.8rem;color:rgba(255,255,255,0.4)" id="cardNumDisp">1/20</div>
+    </div>
+
+    <div class="card-meta">
+      <span class="cat-tag" id="catLabel"></span>
+      <span id="cardNumLabel"></span>
+    </div>
+
+    <div class="flip-scene" id="flipScene" onclick="flipCard()">
+      <div class="flip-card" id="flipCard">
+        <!-- 表：英語 -->
+        <div class="flip-face face-front">
+          <div class="question-deco">？</div>
+          <span class="cat-tag-front" id="frontCatTag"></span>
+          <div class="en-word" id="enWord"></div>
+          <div class="en-phonetic" id="enPhonetic"></div>
+          <div class="hint-tap">👆 タップして こたえを みる</div>
+        </div>
+        <!-- 裏：ひらがな＋絵 -->
+        <div class="flip-face face-back" id="faceBack">
+          <div class="back-en" id="backEn"></div>
+          <div class="illust" id="cardIllust"></div>
+          <div class="ja-reading" id="jaReading"></div>
+          <div class="ja-desc" id="jaDesc"></div>
+          <div class="example-en" id="exampleEn"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 覚えた？ボタン（めくった後に表示） -->
+    <div class="action-row" id="actionRow">
+      <button class="action-btn btn-ok" onclick="markCard(true)">✅ おぼえた！</button>
+      <button class="action-btn btn-ng" onclick="markCard(false)">❌ もういちど</button>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-nav" onclick="prevCard()">← まえ</button>
+      <button class="btn-nav primary" id="nextCardBtn" onclick="nextCard()">つぎ →</button>
+    </div>
+  </div>
+
+  <!-- けっか -->
+  <div id="resultScreen">
+    <div class="result-card">
+      <div class="result-emoji" id="resEmoji">🎉</div>
+      <div class="result-score" id="resScore">0</div>
+      <div class="result-total" id="resTotal">/ 20まい</div>
+      <div class="stars" id="resStars"></div>
+      <div class="result-msg" id="resMsg"></div>
+
+      <div class="result-list-title">📋 このセッションのたんご</div>
+      <div class="result-list" id="resultList"></div>
+    </div>
+    <div class="retry-btns">
+      <button class="btn-retry btn-r1" onclick="retryNg()">❌ まちがいだけ もういちど</button>
+      <button class="btn-retry btn-r2" onclick="goHome()">🏠 ホームへ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====================================================
+// データ：英検4級レベル単語（絵文字・ひらがな・説明付き）
+// ====================================================
+const WORDS = [
+  // 自然・天気
+  { cat:'しぜん', en:'mountain', phonetic:'/ˈmaʊntən/', illust:'🏔️', ja:'やま', desc:'たかくて おおきな やま', ex:'Let\'s climb the mountain.' },
+  { cat:'しぜん', en:'river', phonetic:'/ˈrɪvər/', illust:'🏞️', ja:'かわ', desc:'ながれる みず のこと', ex:'The river is wide.' },
+  { cat:'しぜん', en:'forest', phonetic:'/ˈfɔːrɪst/', illust:'🌲', ja:'もり', desc:'きがたくさん はえている ところ', ex:'A fox lives in the forest.' },
+  { cat:'しぜん', en:'ocean', phonetic:'/ˈoʊʃən/', illust:'🌊', ja:'うみ（たいよう）', desc:'とても ひろい うみ', ex:'Whales live in the ocean.' },
+  { cat:'しぜん', en:'sky', phonetic:'/skaɪ/', illust:'🌤️', ja:'そら', desc:'うえを みると ある そら', ex:'The sky is blue today.' },
+  { cat:'しぜん', en:'cloud', phonetic:'/klaʊd/', illust:'☁️', ja:'くも', desc:'そらに うかぶ しろい くも', ex:'Dark clouds are coming.' },
+  { cat:'しぜん', en:'rain', phonetic:'/reɪn/', illust:'🌧️', ja:'あめ', desc:'そらから おちてくる みず', ex:'It will rain tomorrow.' },
+  { cat:'しぜん', en:'snow', phonetic:'/snoʊ/', illust:'❄️', ja:'ゆき', desc:'ふゆに そらから ふってくる しろいもの', ex:'Snow falls in winter.' },
+  { cat:'しぜん', en:'wind', phonetic:'/wɪnd/', illust:'💨', ja:'かぜ', desc:'ふいてくる かぜ', ex:'The wind is strong today.' },
+  { cat:'しぜん', en:'flower', phonetic:'/ˈflaʊər/', illust:'🌸', ja:'はな', desc:'きれいな いろの はな', ex:'This flower is beautiful.' },
+  { cat:'しぜん', en:'tree', phonetic:'/triː/', illust:'🌳', ja:'き', desc:'だいちに はえる おおきな き', ex:'A bird is in the tree.' },
+  { cat:'しぜん', en:'lake', phonetic:'/leɪk/', illust:'🏊', ja:'みずうみ', desc:'りくに かこまれた みず', ex:'We swam in the lake.' },
+
+  // 食べ物・飲み物
+  { cat:'たべもの', en:'breakfast', phonetic:'/ˈbrekfəst/', illust:'🍳', ja:'あさごはん', desc:'あさ たべる しょくじ', ex:'I eat breakfast at 7.' },
+  { cat:'たべもの', en:'lunch', phonetic:'/lʌntʃ/', illust:'🍱', ja:'ひるごはん', desc:'ひるに たべる しょくじ', ex:'Let\'s have lunch together.' },
+  { cat:'たべもの', en:'dinner', phonetic:'/ˈdɪnər/', illust:'🍽️', ja:'ばんごはん', desc:'よる たべる しょくじ', ex:'Dinner is at 6 o\'clock.' },
+  { cat:'たべもの', en:'rice', phonetic:'/raɪs/', illust:'🍚', ja:'ごはん・こめ', desc:'にほんの たいせつな しょくじ', ex:'I like rice very much.' },
+  { cat:'たべもの', en:'salad', phonetic:'/ˈsæləd/', illust:'🥗', ja:'サラダ', desc:'やさいで つくった りょうり', ex:'She made a big salad.' },
+  { cat:'たべもの', en:'pizza', phonetic:'/ˈpiːtsə/', illust:'🍕', ja:'ピザ', desc:'イタリアの たべもの', ex:'Pizza is my favorite food.' },
+  { cat:'たべもの', en:'sandwich', phonetic:'/ˈsænwɪtʃ/', illust:'🥪', ja:'サンドイッチ', desc:'パンで はさんだ たべもの', ex:'I made a sandwich for lunch.' },
+  { cat:'たべもの', en:'soup', phonetic:'/suːp/', illust:'🍲', ja:'スープ', desc:'あつい しるもの', ex:'This soup is delicious.' },
+  { cat:'たべもの', en:'chocolate', phonetic:'/ˈtʃɒklət/', illust:'🍫', ja:'チョコレート', desc:'あまい おかし', ex:'I love chocolate cake.' },
+  { cat:'たべもの', en:'ice cream', phonetic:'/ˈaɪs kriːm/', illust:'🍦', ja:'アイスクリーム', desc:'つめたくて あまい おかし', ex:'Let\'s get some ice cream.' },
+  { cat:'たべもの', en:'coffee', phonetic:'/ˈkɒfi/', illust:'☕', ja:'コーヒー', desc:'あたたかい のみもの', ex:'Mom drinks coffee every morning.' },
+  { cat:'たべもの', en:'juice', phonetic:'/dʒuːs/', illust:'🧃', ja:'ジュース', desc:'くだものから つくった のみもの', ex:'Orange juice is sweet.' },
+
+  // 学校・勉強
+  { cat:'がっこう', en:'classroom', phonetic:'/ˈklɑːsruːm/', illust:'🏫', ja:'きょうしつ', desc:'じゅぎょうを うける へや', ex:'Our classroom is on the 2nd floor.' },
+  { cat:'がっこう', en:'blackboard', phonetic:'/ˈblækbɔːrd/', illust:'🖊️', ja:'こくばん', desc:'チョークで かく ばん', ex:'Look at the blackboard.' },
+  { cat:'がっこう', en:'notebook', phonetic:'/ˈnoʊtbʊk/', illust:'📓', ja:'ノート', desc:'じゅぎょうの メモを とる もの', ex:'Write in your notebook.' },
+  { cat:'がっこう', en:'dictionary', phonetic:'/ˈdɪkʃəneri/', illust:'📖', ja:'じしょ', desc:'ことばの いみを しらべる ほん', ex:'Use your dictionary.' },
+  { cat:'がっこう', en:'homework', phonetic:'/ˈhoʊmwɜːrk/', illust:'✏️', ja:'しゅくだい', desc:'いえで やる べんきょう', ex:'I finished my homework.' },
+  { cat:'がっこう', en:'test', phonetic:'/test/', illust:'📝', ja:'テスト・しけん', desc:'べんきょうした ことを たしかめる', ex:'We have a test tomorrow.' },
+  { cat:'がっこう', en:'subject', phonetic:'/ˈsʌbdʒɪkt/', illust:'🔬', ja:'きょうか・かもく', desc:'りか・すうがく などの こと', ex:'My favorite subject is science.' },
+  { cat:'がっこう', en:'library', phonetic:'/ˈlaɪbreri/', illust:'📚', ja:'としょかん', desc:'ほんを かりる ところ', ex:'I go to the library after school.' },
+  { cat:'がっこう', en:'vacation', phonetic:'/veɪˈkeɪʃən/', illust:'🏖️', ja:'やすみ・きゅうか', desc:'がっこうが やすみの じかん', ex:'Summer vacation is fun.' },
+  { cat:'がっこう', en:'club', phonetic:'/klʌb/', illust:'⚽', ja:'クラブ・ぶかつ', desc:'がっこうの ぶかつどう', ex:'I\'m in the soccer club.' },
+
+  // スポーツ・趣味
+  { cat:'スポーツ', en:'swimming', phonetic:'/ˈswɪmɪŋ/', illust:'🏊', ja:'すいえい', desc:'みずの なかを およぐ スポーツ', ex:'Swimming is good exercise.' },
+  { cat:'スポーツ', en:'tennis', phonetic:'/ˈtenɪs/', illust:'🎾', ja:'テニス', desc:'ラケットで ボールを うつ スポーツ', ex:'She plays tennis every day.' },
+  { cat:'スポーツ', en:'baseball', phonetic:'/ˈbeɪsbɔːl/', illust:'⚾', ja:'やきゅう', desc:'にほんで にんきの スポーツ', ex:'Baseball is popular in Japan.' },
+  { cat:'スポーツ', en:'basketball', phonetic:'/ˈbæskɪtbɔːl/', illust:'🏀', ja:'バスケットボール', desc:'たかい ゴールに いれる スポーツ', ex:'Let\'s play basketball.' },
+  { cat:'スポーツ', en:'skiing', phonetic:'/ˈskiːɪŋ/', illust:'⛷️', ja:'スキー', desc:'ゆきやまを すべる スポーツ', ex:'I went skiing in winter.' },
+  { cat:'スポーツ', en:'cycling', phonetic:'/ˈsaɪklɪŋ/', illust:'🚴', ja:'サイクリング', desc:'じてんしゃで はしること', ex:'Cycling is fun and healthy.' },
+  { cat:'スポーツ', en:'music', phonetic:'/ˈmjuːzɪk/', illust:'🎵', ja:'おんがく', desc:'うたや がっきの こと', ex:'I like listening to music.' },
+  { cat:'スポーツ', en:'movie', phonetic:'/ˈmuːvi/', illust:'🎬', ja:'えいが', desc:'えいがかんで みる もの', ex:'Let\'s watch a movie tonight.' },
+  { cat:'スポーツ', en:'camping', phonetic:'/ˈkæmpɪŋ/', illust:'⛺', ja:'キャンプ', desc:'そとで テントに とまること', ex:'We went camping last summer.' },
+  { cat:'スポーツ', en:'painting', phonetic:'/ˈpeɪntɪŋ/', illust:'🎨', ja:'えをかくこと', desc:'いろを つかって えを かく', ex:'She loves painting pictures.' },
+
+  // 場所・建物
+  { cat:'ばしょ', en:'hospital', phonetic:'/ˈhɒspɪtl/', illust:'🏥', ja:'びょういん', desc:'びょうきを なおす ところ', ex:'My mother works at a hospital.' },
+  { cat:'ばしょ', en:'supermarket', phonetic:'/ˈsuːpərmɑːrkɪt/', illust:'🛒', ja:'スーパーマーケット', desc:'たべものを かう みせ', ex:'Let\'s go to the supermarket.' },
+  { cat:'ばしょ', en:'airport', phonetic:'/ˈeərpɔːrt/', illust:'✈️', ja:'くうこう', desc:'ひこうきが とびたつ ところ', ex:'We arrived at the airport.' },
+  { cat:'ばしょ', en:'museum', phonetic:'/mjuːˈziːəm/', illust:'🏛️', ja:'はくぶつかん', desc:'むかしの ものを てんじする ところ', ex:'Let\'s visit the museum.' },
+  { cat:'ばしょ', en:'restaurant', phonetic:'/ˈrestərɒnt/', illust:'🍴', ja:'レストラン', desc:'りょうりを たべさせてくれる みせ', ex:'This restaurant is very popular.' },
+  { cat:'ばしょ', en:'post office', phonetic:'/poʊst ˈɒfɪs/', illust:'📮', ja:'ゆうびんきょく', desc:'てがみや にもつを おくる ところ', ex:'I went to the post office.' },
+  { cat:'ばしょ', en:'stadium', phonetic:'/ˈsteɪdiəm/', illust:'🏟️', ja:'スタジアム', desc:'スポーツを みる おおきな しせつ', ex:'The stadium holds 50,000 people.' },
+  { cat:'ばしょ', en:'station', phonetic:'/ˈsteɪʃən/', illust:'🚉', ja:'えき', desc:'でんしゃが とまる ところ', ex:'Meet me at the station.' },
+
+  // 身体・健康
+  { cat:'からだ', en:'headache', phonetic:'/ˈhedeɪk/', illust:'🤕', ja:'ずつう・あたまいた', desc:'あたまが いたいこと', ex:'I have a headache today.' },
+  { cat:'からだ', en:'stomachache', phonetic:'/ˈstʌməkeɪk/', illust:'🤢', ja:'おなかいた', desc:'おなかが いたいこと', ex:'He has a stomachache.' },
+  { cat:'からだ', en:'tired', phonetic:'/ˈtaɪərd/', illust:'😴', ja:'つかれた', desc:'とても つかれた ようす', ex:'I\'m very tired today.' },
+  { cat:'からだ', en:'hungry', phonetic:'/ˈhʌŋɡri/', illust:'😋', ja:'おなかが すいた', desc:'たべものを たべたい きもち', ex:'I\'m so hungry!' },
+  { cat:'からだ', en:'thirsty', phonetic:'/ˈθɜːrsti/', illust:'🥤', ja:'のどが かわいた', desc:'みずを のみたい きもち', ex:'Are you thirsty?' },
+  { cat:'からだ', en:'healthy', phonetic:'/ˈhelθi/', illust:'💪', ja:'けんこうな', desc:'からだが げんきな ようす', ex:'Exercise keeps you healthy.' },
+
+  // 形容詞
+  { cat:'けいようし', en:'beautiful', phonetic:'/ˈbjuːtɪfl/', illust:'😍', ja:'うつくしい・きれい', desc:'とても きれいな ようす', ex:'What a beautiful sunset!' },
+  { cat:'けいようし', en:'exciting', phonetic:'/ɪkˈsaɪtɪŋ/', illust:'🤩', ja:'わくわくする・たのしい', desc:'どきどき わくわくする ようす', ex:'The game was so exciting.' },
+  { cat:'けいようし', en:'delicious', phonetic:'/dɪˈlɪʃəs/', illust:'😋', ja:'おいしい', desc:'とても おいしい たべもの', ex:'This cake is delicious.' },
+  { cat:'けいようし', en:'difficult', phonetic:'/ˈdɪfɪkəlt/', illust:'😓', ja:'むずかしい', desc:'むずかしくて てごわい', ex:'Math is difficult for me.' },
+  { cat:'けいようし', en:'popular', phonetic:'/ˈpɒpjələr/', illust:'⭐', ja:'にんきがある', desc:'みんなに すかれている ようす', ex:'Soccer is popular in Japan.' },
+  { cat:'けいようし', en:'surprised', phonetic:'/səˈpraɪzd/', illust:'😮', ja:'おどろいた', desc:'びっくりした ようす', ex:'I was surprised by the news.' },
+  { cat:'けいようし', en:'nervous', phonetic:'/ˈnɜːrvəs/', illust:'😰', ja:'きんちょうした', desc:'ドキドキ きんちょうしている', ex:'I\'m nervous about the test.' },
+  { cat:'けいようし', en:'comfortable', phonetic:'/ˈkʌmftəbl/', illust:'😊', ja:'きもちいい・らくな', desc:'らくで きもちよい ようす', ex:'This chair is very comfortable.' },
+
+  // 動詞
+  { cat:'どうし', en:'enjoy', phonetic:'/ɪnˈdʒɔɪ/', illust:'😄', ja:'たのしむ', desc:'なにかを たのしむ ようす', ex:'I enjoy playing soccer.' },
+  { cat:'どうし', en:'visit', phonetic:'/ˈvɪzɪt/', illust:'🗺️', ja:'おとずれる・たずねる', desc:'どこかへ いく こと', ex:'Let\'s visit Kyoto.' },
+  { cat:'どうし', en:'help', phonetic:'/help/', illust:'🤝', ja:'てつだう・たすける', desc:'だれかを てつだうこと', ex:'Can you help me?' },
+  { cat:'どうし', en:'remember', phonetic:'/rɪˈmembər/', illust:'🧠', ja:'おぼえる・おもいだす', desc:'わすれずに おぼえておくこと', ex:'Remember to bring your book.' },
+  { cat:'どうし', en:'arrive', phonetic:'/əˈraɪv/', illust:'🎯', ja:'とうちゃくする', desc:'めてきちに つくこと', ex:'We arrived at the hotel.' },
+  { cat:'どうし', en:'collect', phonetic:'/kəˈlekt/', illust:'🗃️', ja:'あつめる', desc:'いろいろな ものを あつめること', ex:'I collect stamps.' },
+  { cat:'どうし', en:'practice', phonetic:'/ˈpræktɪs/', illust:'🎯', ja:'れんしゅうする', desc:'うまくなるために くりかえすこと', ex:'Practice makes perfect.' },
+  { cat:'どうし', en:'prepare', phonetic:'/prɪˈpeər/', illust:'📋', ja:'じゅんびする', desc:'まえもって よういすること', ex:'Prepare for the test.' },
+];
+
+// ====================================================
+// カテゴリ一覧を抽出
+// ====================================================
+const CATS_META = {
+  'しぜん':    { icon:'🌿', en:'nature' },
+  'たべもの':  { icon:'🍔', en:'food' },
+  'がっこう':  { icon:'✏️', en:'school' },
+  'スポーツ':  { icon:'⚽', en:'sports/hobby' },
+  'ばしょ':    { icon:'📍', en:'places' },
+  'からだ':    { icon:'💪', en:'health' },
+  'けいようし':{ icon:'💬', en:'adjectives' },
+  'どうし':    { icon:'🏃', en:'verbs' },
+};
+
+// ====================================================
+// 状態
+// ====================================================
+let selectedCats = [];
+let cardCount = 20;
+let deck = [];
+let current = 0;
+let isFlipped = false;
+let results = []; // {word, ok: bool}
+
+// ====================================================
+// 初期化
+// ====================================================
+window.onload = () => {
+  // 星を生成
+  const sc = document.getElementById('starsContainer');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 3 + 1;
+    s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s`;
+    sc.appendChild(s);
+  }
+  buildCatGrid();
+};
+
+function buildCatGrid() {
+  const grid = document.getElementById('catGrid');
+  grid.innerHTML = '';
+  Object.entries(CATS_META).forEach(([cat, meta]) => {
+    const count = WORDS.filter(w => w.cat === cat).length;
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn';
+    btn.innerHTML = `<span class="icon">${meta.icon}</span>${cat}<span class="en-label">${meta.en} / ${count}たんご</span>`;
+    btn.onclick = () => toggleCat(btn, cat);
+    grid.appendChild(btn);
+  });
+}
+
+function toggleCat(btn, cat) {
+  if (btn.classList.contains('selected')) {
+    btn.classList.remove('selected');
+    selectedCats = selectedCats.filter(c => c !== cat);
+  } else {
+    btn.classList.add('selected');
+    selectedCats.push(cat);
+  }
+  document.getElementById('startBtn').disabled = selectedCats.length === 0;
+}
+
+function setCount(n, btn) {
+  cardCount = n;
+  document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+// ====================================================
+// フラッシュ開始
+// ====================================================
+function startFlash() {
+  const pool = WORDS.filter(w => selectedCats.includes(w.cat));
+  deck = shuffle([...pool]).slice(0, Math.min(cardCount, pool.length));
+  current = 0;
+  results = deck.map(w => ({ word: w, ok: null }));
+  document.getElementById('homeScreen').classList.add('hidden');
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('flashScreen').style.display = 'block';
+  showCard();
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// ====================================================
+// カード表示
+// ====================================================
+function showCard() {
+  const w = deck[current];
+  isFlipped = false;
+
+  // 表面
+  document.getElementById('enWord').textContent = w.en;
+  document.getElementById('enPhonetic').textContent = w.phonetic;
+  document.getElementById('frontCatTag').textContent = w.cat;
+  document.getElementById('catLabel').textContent = w.cat;
+
+  // 裏面
+  document.getElementById('backEn').textContent = w.en;
+  document.getElementById('cardIllust').textContent = w.illust;
+  document.getElementById('jaReading').textContent = w.ja;
+  document.getElementById('jaDesc').textContent = w.desc;
+  document.getElementById('exampleEn').textContent = w.ex;
+
+  // カード状態リセット
+  const fc = document.getElementById('flipCard');
+  const fb = document.getElementById('faceBack');
+  fc.classList.remove('flipped');
+  fb.classList.remove('show-anim');
+  document.getElementById('actionRow').classList.remove('show');
+
+  // スコア・進捗
+  const okN = results.filter(r => r.ok === true).length;
+  const ngN = results.filter(r => r.ok === false).length;
+  document.getElementById('okCount').textContent = okN;
+  document.getElementById('ngCount').textContent = ngN;
+  document.getElementById('cardNumDisp').textContent = `${current+1}/${deck.length}`;
+  document.getElementById('cardNumLabel').textContent = `${current+1} まい め / ${deck.length}まい`;
+  document.getElementById('progBar').style.width = `${(current / deck.length) * 100}%`;
+
+  // 次へボタン
+  document.getElementById('nextCardBtn').textContent =
+    current < deck.length - 1 ? 'つぎ →' : '🎉 けっかをみる！';
+}
+
+function flipCard() {
+  if (isFlipped) return;
+  isFlipped = true;
+  const fc = document.getElementById('flipCard');
+  const fb = document.getElementById('faceBack');
+  fc.classList.add('flipped');
+  setTimeout(() => {
+    fb.classList.add('show-anim');
+    document.getElementById('actionRow').classList.add('show');
+  }, 350);
+}
+
+function markCard(ok) {
+  results[current].ok = ok;
+  nextCard();
+}
+
+function nextCard() {
+  current++;
+  if (current >= deck.length) {
+    showResult();
+  } else {
+    showCard();
+  }
+}
+
+function prevCard() {
+  if (current > 0) {
+    current--;
+    showCard();
+  }
+}
+
+// ====================================================
+// 結果
+// ====================================================
+function showResult() {
+  document.getElementById('flashScreen').style.display = 'none';
+  document.getElementById('resultScreen').style.display = 'block';
+  document.getElementById('progBar').style.width = '100%';
+
+  const total = deck.length;
+  const okN = results.filter(r => r.ok === true).length;
+  const pct = okN / total;
+
+  document.getElementById('resScore').textContent = okN;
+  document.getElementById('resTotal').textContent = `/ ${total}まい おぼえた`;
+
+  let emoji, stars, msg;
+  if (pct >= 0.9) {
+    emoji = '🏆'; stars = '⭐⭐⭐'; msg = 'かんぺき！えいごの てんさい！🎊';
+  } else if (pct >= 0.7) {
+    emoji = '🌟'; stars = '⭐⭐'; msg = 'すごい！よくおぼえてたね！';
+  } else if (pct >= 0.5) {
+    emoji = '💪'; stars = '⭐'; msg = 'がんばったね！もうすこしで かんぺき！';
+  } else {
+    emoji = '🌱'; stars = '🔥'; msg = 'まちがえた ところを もう いちど！';
+  }
+  document.getElementById('resEmoji').textContent = emoji;
+  document.getElementById('resStars').textContent = stars;
+  document.getElementById('resMsg').textContent = msg;
+
+  // リスト
+  const list = document.getElementById('resultList');
+  list.innerHTML = '';
+  results.forEach(r => {
+    const w = r.word;
+    const div = document.createElement('div');
+    const status = r.ok === true ? 'ri-ok' : r.ok === false ? 'ri-ng' : '';
+    const badge = r.ok === true ? '✅' : r.ok === false ? '❌' : '－';
+    div.className = `result-item ${status}`;
+    div.innerHTML = `
+      <span class="ri-icon">${w.illust}</span>
+      <span class="ri-en">${badge} ${w.en}</span>
+      <span class="ri-ja">${w.ja}</span>
+    `;
+    list.appendChild(div);
+  });
+
+  // まちがいのみ再挑戦ボタン
+  const ngList = results.filter(r => r.ok === false).map(r => r.word);
+  const retryBtn = document.querySelector('.btn-r1');
+  retryBtn.disabled = ngList.length === 0;
+  retryBtn.style.opacity = ngList.length === 0 ? '0.4' : '1';
+}
+
+function retryNg() {
+  const ngWords = results.filter(r => r.ok === false).map(r => r.word);
+  if (ngWords.length === 0) return;
+  deck = shuffle([...ngWords]);
+  current = 0;
+  results = deck.map(w => ({ word: w, ok: null }));
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('flashScreen').style.display = 'block';
+  showCard();
+}
+
+function goHome() {
+  document.getElementById('resultScreen').style.display = 'none';
+  document.getElementById('flashScreen').style.display = 'none';
+  document.getElementById('homeScreen').classList.remove('hidden');
+}
+</script>
 </body>
 </html>
